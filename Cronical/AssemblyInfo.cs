@@ -13,7 +13,7 @@ using System.Runtime.CompilerServices;
 //------------------------------------------------------------------------------
 
 [assembly: AssemblyCompanyAttribute("Ciceronen Telecom AB")]
-[assembly: AssemblyCopyrightAttribute("")]
+[assembly: AssemblyCopyrightAttribute("Apache License 2.0")]
 [assembly: AssemblyTrademarkAttribute("")]
 [assembly: AssemblyCultureAttribute("")]
 [assembly: CLSCompliantAttribute(true)]

@@ -31,18 +31,18 @@
 # === Global settings ===
 
 RunMissedJobs = true
-LogPath       = c:\ciceronen\logs\cimex
+LogPath       = .
 Timeout       = 3600
 
 # === Settings for each job ===
 
-Home          = c:\ciceronen\jobs
-MailFrom      = cronical@ciceronen.com
-MailTo        = mats@ciceronen.com
-MailStdOut    = true
+Home          = 
+MailFrom      = cronical@example.com
+MailTo        = admin@example.com
+MailStdOut    = false
 # MailCc      = 
 # MailBcc     = 
-SmtpHost      = mail.ciceronen.com
+SmtpHost      = mail.example.com
 SmtpSSL       = false
 # SmtpUser    = 
 # SmtpPass    = 
