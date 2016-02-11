@@ -1,0 +1,9 @@
+﻿@service     sort
+
+@reboot      help cmd
+@yearly      cmd /c echo Yearly
+@annually    cmd /c echo Annually
+@monthly     cmd /c echo Monthly
+@weekly      cmd /c echo Weekly
+@daily       cmd /c echo Daily
+@hourly      cmd /c echo Hourly
