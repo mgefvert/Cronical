@@ -104,10 +104,10 @@ namespace Cronical.Misc
       }
 
       // Try a few methods of signaling close. CloseMainWindow sends a WM_CLOSE message to the
-      // main window, which usually closes an application; closing the StdIn pipe is also a good
-      // way of terminating console programs.
+      // main window, which usually closes an application; closing the StdIn pipe may also trigger
+      // the end of a console program.
 
-      Logger.Debug("Stop: Closing main window and standard input");
+      Logger.Debug("Stop: Closing input stream and main window");
       Process.CloseMainWindow();
       Process.StandardInput.Close();
       if (Process.WaitForExit(3000))
@@ -116,19 +116,24 @@ namespace Cronical.Misc
         return;
       }
 
-      // Be a little bit more blunt.
-      Logger.Debug("Stop: Posting WM_QUIT messages.");
+      // Be a little bit more blunt by mass posting WM_QUIT messages on the process threads. 
+      // Also, start a subprocess that attaches to the child process' console and generates a CtrlC.
+      // We can't do this in our own process because we need to detach from the console - and then
+      // we can't use Console.WriteLine anymore.
+
+      Logger.Debug("Stop: Sending quit message and Ctrl-Break");
       foreach (var id in Process.Threads.Cast<ProcessThread>().Select(thread => thread.Id).ToList())
         PostThreadMessage(id, WmQuit, (IntPtr)0, (IntPtr)0);
-
+      InjectCtrlC.Break(Process.Id);
       if (Process.WaitForExit(3000))
       {
         Logger.Debug("Stop: Service terminated.");
         return;
       }
 
-      // Still running? Try a more brutal approach.
-      Logger.Log("Service did not respond to end request, terminating forcibly...");
+      // Still running? Force kill.
+
+      Logger.Log("Service did not respond to end request, terminating forcibly.");
       Process.Kill();
       if (Process.WaitForExit(3000))
       {

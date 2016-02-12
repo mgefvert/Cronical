@@ -54,11 +54,13 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Configuration\ConfigReader.cs" />
     <Compile Include="Configuration\Config.cs" />
+    <Compile Include="InjectCtrlC.cs" />
     <Compile Include="Jobs\Job.cs" />
     <Compile Include="Logging\LogConfiguration.cs" />
     <Compile Include="Logging\Logger.cs" />
     <Compile Include="Logging\FileLogMethod.cs" />
     <Compile Include="Logging\ILogMethod.cs" />
+    <Compile Include="Misc\Crc32.cs" />
     <Compile Include="Misc\ListHelper.cs" />
     <Compile Include="Misc\ProcessParameters.cs" />
     <Compile Include="Misc\ProcessWrapper.cs" />
@@ -90,7 +92,7 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="cronical.dat.example">
+    <None Include="cronical.dat">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -98,7 +100,7 @@
   <PropertyGroup>
     <PostBuildEvent>copy /y $(TargetPath) $(SolutionDir)\Binaries
 copy /y $(TargetPath).config $(SolutionDir)\Binaries
-copy /y $(TargetDir)\cronical.dat.example $(SolutionDir)\Binaries\cronical.dat
+copy /y $(TargetDir)\cronical.dat $(SolutionDir)\Binaries\cronical.dat
 </PostBuildEvent>
   </PropertyGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

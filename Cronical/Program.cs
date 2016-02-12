@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.ServiceProcess;
 using System.Threading;
@@ -18,8 +19,6 @@ namespace Cronical
     {
       try
       {
-        _opts = new CommandLineOptions(args);
-
         // Always reset the current working directory to where the executable is
         // Absolutely necessary for services, and probably the desired behavior for
         // console processes as well.
@@ -28,10 +27,19 @@ namespace Cronical
           Directory.SetCurrentDirectory(path);
 
         // Initialize the logging system
-        Logger.Configuration.EchoToConsole = true;
         Logger.Configuration.Path = path;
         Logger.Configuration.ProcessName = "cronical";
         Logger.Configuration.Retention = 3;
+
+        // CTRL-C subprocess handler
+        if ((args.FirstOrDefault() ?? "") == "ctrlc")
+        {
+          InjectCtrlC.Handle(args);
+          return;
+        }
+
+        Logger.Configuration.EchoToConsole = true;
+        _opts = new CommandLineOptions(args);
 
         // Load the configuration file and scan it for global keywords
         InitialConfigScan();
