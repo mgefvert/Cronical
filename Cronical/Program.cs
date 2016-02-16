@@ -41,8 +41,10 @@ namespace Cronical
         Logger.Configuration.EchoToConsole = true;
         _opts = new CommandLineOptions(args);
 
-        // Load the configuration file and scan it for global keywords
-        InitialConfigScan();
+        if (!File.Exists(_opts.ConfigFile))
+          throw new FileNotFoundException("Can't find cron data file " + _opts.ConfigFile);
+
+        Logger.Configuration.Severity = _opts.DebugLogs ? LogSeverity.Debug : LogSeverity.Default;
         Logger.Notice("Cronical booting up");
 
         var service = new Service { Filename = _opts.ConfigFile };
@@ -76,28 +78,6 @@ namespace Cronical
       {
         Logger.Error(ex.GetType().Name + ": " + ex.Message);
       }
-    }
-
-    private static void InitialConfigScan()
-    {
-      if (!File.Exists(_opts.ConfigFile))
-        throw new FileNotFoundException("Can't find cron data file " + _opts.ConfigFile);
-
-      string logpath = null;
-      var reader = new ConfigReader();
-      reader.DefinitionRead += (sender, args) =>
-      {
-        if (args.Definition.Equals("LOGPATH", StringComparison.InvariantCultureIgnoreCase))
-          logpath = args.Value;
-      };
-
-      reader.Read(_opts.ConfigFile);
-
-      // If we found a LogPath command, reinitialize the logger
-      if (logpath != null)
-        Logger.Configuration.Path = logpath;
-
-      Logger.Configuration.Severity = _opts.DebugLogs ? LogSeverity.Debug : LogSeverity.Default;
     }
 
     private static void InstallService()

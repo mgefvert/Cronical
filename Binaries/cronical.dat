@@ -31,7 +31,6 @@
 # === Global settings ===
 
 RunMissedJobs = true
-LogPath       = .
 Timeout       = 3600
 
 # === Settings for each job ===
