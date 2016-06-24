@@ -8,20 +8,20 @@ namespace Cronical.Test
   public class CronManagerTest
   {
     [TestMethod]
-    [DeploymentItem("cronical.dat")]
+    [DeploymentItem("test.dat")]
     public void TestReadCronDat()
     {
-      var mgr = new CronManager("cronical.dat");
+      var mgr = new CronManager("test.dat");
 
       Assert.AreEqual(7, mgr.Config.CronJobs.Count());
       Assert.AreEqual(1, mgr.Config.ServiceJobs.Count());
     }
 
     [TestMethod]
-    [DeploymentItem("cronical.dat")]
+    [DeploymentItem("test.dat")]
     public void TestReloadCronDat()
     {
-      var mgr = new CronManager("cronical.dat");
+      var mgr = new CronManager("test.dat");
 
       Assert.AreEqual(7, mgr.Config.CronJobs.Count());
       Assert.AreEqual(1, mgr.Config.ServiceJobs.Count());
