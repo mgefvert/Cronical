@@ -15,7 +15,7 @@ namespace Cronical
     private static CommandLineOptions _opts;
     public static IMailSender MailSender = new MailSender();
 
-    static void Main(string[] args)
+    static int Main(string[] args)
     {
       try
       {
@@ -35,7 +35,7 @@ namespace Cronical
         if ((args.FirstOrDefault() ?? "") == "ctrlc")
         {
           InjectCtrlC.Handle(args);
-          return;
+          return 0;
         }
 
         Logger.Configuration.EchoToConsole = true;
@@ -52,15 +52,15 @@ namespace Cronical
         if (_opts.InstallService)
         {
           // Install the program as a Windows service
-          InstallService();
-          return;
+          InstallService(_opts);
+          return 0;
         }
 
         if (_opts.RemoveService)
         {
           // Remove the program from the list of Windows services
-          RemoveService();
-          return;
+          RemoveService(_opts);
+          return 0;
         }
 
         if (_opts.Console)
@@ -73,23 +73,42 @@ namespace Cronical
           Logger.Log("Starting Cronical as a service...");
           ServiceBase.Run(service);
         }
+
+        return 0;
+      }
+      catch (OperationCanceledException)
+      {
+        // Thrown when we abort startup, perhaps to display help ... just exit
+        return 1;
       }
       catch (Exception ex)
       {
         Logger.Error(ex.GetType().Name + ": " + ex.Message);
+        return 1;
       }
     }
 
-    private static void InstallService()
+    private static void InstallService(CommandLineOptions opts)
     {
-      Logger.Log("Installing service...");
-      ServiceHelper.Install("Cronical", "Ciceronen Cronical", Assembly.GetExecutingAssembly().Location);
+      Logger.Log($"Installing service '{opts.ServiceName}'...");
+
+      var cmd = $"\"{Assembly.GetExecutingAssembly().Location}\"";
+      if (opts.ConfigFileOverride)
+      {
+        var configFile = Path.GetFullPath(opts.ConfigFile);
+        if (!File.Exists(configFile))
+          throw new Exception($"Config file {configFile} does not exist!");
+
+        cmd += $" -c \"{configFile}\"";
+      }
+
+      ServiceHelper.Install(opts.ServiceName, opts.ServiceTitle, cmd);
     }
 
-    private static void RemoveService()
+    private static void RemoveService(CommandLineOptions opts)
     {
-      Logger.Log("Removing service...");
-      ServiceHelper.Uninstall("Cronical");
+      Logger.Log($"Removing service '{opts.ServiceName}'...");
+      ServiceHelper.Uninstall(opts.ServiceName);
     }
 
     private static void RunStandalone(Service service)
