@@ -102,7 +102,7 @@ namespace Cronical
         cmd += $" -c \"{configFile}\"";
       }
 
-      ServiceHelper.Install(opts.ServiceName, opts.ServiceTitle, cmd);
+      ServiceHelper.Install(opts.ServiceName, opts.ServiceTitle, cmd, ServiceHelper.ServiceBootFlag.AutoStart, opts.ServiceDescription);
     }
 
     private static void RemoveService(CommandLineOptions opts)

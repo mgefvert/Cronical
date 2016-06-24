@@ -13,9 +13,9 @@ namespace Cronical.Misc
 {
   public static class ServiceHelper
   {
-    #region Win32 constants and structures
     private const int STANDARD_RIGHTS_REQUIRED = 0xF0000;
-    private const int SERVICE_WIN32_OWN_PROCESS = 0x00000010;
+    private const int SERVICE_WIN32_OWN_PROCESS = 0x10;
+    private const int SERVICE_CONFIG_DESCRIPTION = 1;
 
     [StructLayout(LayoutKind.Sequential)]
     private class SERVICE_STATUS
@@ -56,9 +56,10 @@ namespace Cronical.Misc
 
     [DllImport("advapi32.dll", SetLastError = true)]
     private static extern int StartService(IntPtr hService, int dwNumServiceArgs, int lpServiceArgVectors);
-    #endregion
 
-    #region Win32 enums
+    [DllImport("advapi32.dll", SetLastError = true)]
+    private static extern int ChangeServiceConfig2(IntPtr hService, uint dwInfoLevel, ref SERVICE_DESCRIPTION info);
+
     public enum ServiceState
     {
       Unknown = -1, // The state cannot be (has not been) retrieved.
@@ -135,7 +136,11 @@ namespace Cronical.Misc
       Severe = 0x00000002,
       Critical = 0x00000003
     }
-    #endregion
+
+    private struct SERVICE_DESCRIPTION
+    {
+      public IntPtr lpDescription;
+    }
 
     public static ServiceState GetServiceStatus(string serviceName)
     {
@@ -172,7 +177,7 @@ namespace Cronical.Misc
       return status.dwCurrentState;
     }
 
-    public static void Install(string serviceName, string displayName, string fileName, ServiceBootFlag startFlag = ServiceBootFlag.AutoStart)
+    public static void Install(string serviceName, string displayName, string fileName, ServiceBootFlag startFlag = ServiceBootFlag.AutoStart, string description = null)
     {
       var scm = OpenSCManager(ScmAccessRights.AllAccess);
 
@@ -186,6 +191,13 @@ namespace Cronical.Misc
 
         if (service == IntPtr.Zero)
           throw new ApplicationException("Failed to install service.");
+
+        if (!string.IsNullOrEmpty(description))
+        {
+          var serviceDescription = new SERVICE_DESCRIPTION { lpDescription = Marshal.StringToHGlobalAnsi(description) };
+          ChangeServiceConfig2(service, SERVICE_CONFIG_DESCRIPTION, ref serviceDescription);
+          Marshal.FreeHGlobal(serviceDescription.lpDescription);
+        }
 
         CloseServiceHandle(service);
       }

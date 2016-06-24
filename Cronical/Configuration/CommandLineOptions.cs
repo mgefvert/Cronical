@@ -65,6 +65,12 @@ namespace Cronical.Configuration
               throw new Exception("Expected text to follow after --service-title");
             break;
 
+          case "--service-desc":
+            ServiceDescription = arglist.ExtractFirstOrDefault();
+            if (string.IsNullOrEmpty(ServiceDescription) || ServiceDescription.StartsWith("-"))
+              throw new Exception("Expected name to follow after --service-desc");
+            break;
+
           default:
             throw new Exception("Unrecognized option " + s);
         }
@@ -85,6 +91,7 @@ namespace Cronical.Configuration
       System.Console.WriteLine("     --service-name <name>   Force specific service name (default 'Cronical')");
       System.Console.WriteLine("     --service-title <text>  Set a different, readable title for the service");
       System.Console.WriteLine("                             (default is 'Cronical Job Scheduler')");
+      System.Console.WriteLine("     --service-desc <text>   Set a description for the service");
     }
 
     public bool Console { get; set; }
@@ -95,5 +102,6 @@ namespace Cronical.Configuration
     public bool RemoveService { get; set; }
     public string ServiceName { get; set; }
     public string ServiceTitle { get; set; }
+    public string ServiceDescription { get; set; }
   }
 }
