@@ -65,7 +65,15 @@ namespace Cronical.Misc
                     ? null
                     : new NetworkCredential(env.SmtpUser, env.SmtpPass);
 
+
                 Program.MailSender.Send(msg, env.SmtpHost, env.SmtpSSL, credentials);
+
+                var emails = msg.To.Select(x => x.Address)
+                    .Concat(msg.CC.Select(x => x.Address))
+                    .Concat(msg.Bcc.Select(x => x.Address))
+                    .ToList();
+
+                Logger.Log("Mail sent to " + string.Join(", ", emails));
             });
         }
     }
