@@ -100,7 +100,7 @@ We're currently looking into the possibly of allowing plugins to load jobs from 
 
 ## Where does it come from?
 
-It is built by [Ciceronen Telecom AB](http://www.ciceronen.com/) in Sweden, and released as open source under an Apache License.
+It was originally built by [Ciceronen Telecom AB](http://www.ciceronen.com/) in Sweden, and then released as open source under an Apache License.
 
 ## Why the name "Cronical"?
 
