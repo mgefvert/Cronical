@@ -15,13 +15,12 @@ if errorlevel 1 goto :error
 
 echo.
 echo = Copying binaries
+if exist Binaries rd /s /q Binaries
+md Binaries
 
-rd /s /q Release
-md Release
-
-pushd cronical\bin\release
-7z a ..\..\..\Release\Cronical.zip cronical.exe cronical.exe.config cronical.dat
-popd
+for %%f in (cronical.exe cronical.exe.config cronical.dat) do (
+    copy cronical\bin\release\%%f binaries
+)
 
 echo.
 echo = Done
