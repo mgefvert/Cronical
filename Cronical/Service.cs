@@ -5,42 +5,42 @@ using Cronical.Logging;
 
 namespace Cronical
 {
-  public partial class Service : ServiceBase
-  {
-    protected Timer Timer;
-    protected CronManager Manager;
-    public string Filename { get; set; }
-
-    public Service()
+    public partial class Service : ServiceBase
     {
-      InitializeComponent();
-    }
+        protected Timer Timer;
+        protected CronManager Manager;
+        public string Filename { get; set; }
 
-    public void Initialize()
-    {
-      Logger.Notice("Process startup");
-      Logger.Log("Using definition file " + Filename);
+        public Service()
+        {
+            InitializeComponent();
+        }
 
-      Manager = new CronManager(Filename);
-      Timer = new Timer(x => Manager.Tick(), null, 1000, 15000);
-    }
+        public void Initialize()
+        {
+            Logger.Notice("Process startup");
+            Logger.Log("Using definition file " + Filename);
 
-    protected override void OnStart(string[] args)
-    {
-      Console.CancelKeyPress += (sender, breakArgs) => breakArgs.Cancel = true;
-      Initialize();
-    }
+            Manager = new CronManager(Filename);
+            Timer = new Timer(x => Manager.Tick(), null, 1000, 15000);
+        }
 
-    protected override void OnStop()
-    {
-      Shutdown();
-    }
+        protected override void OnStart(string[] args)
+        {
+            Console.CancelKeyPress += (sender, breakArgs) => breakArgs.Cancel = true;
+            Initialize();
+        }
 
-    public void Shutdown()
-    {
-      Logger.Notice("Shutting down");
-      Timer.Dispose();
-      Manager.Terminate();
+        protected override void OnStop()
+        {
+            Shutdown();
+        }
+
+        public void Shutdown()
+        {
+            Logger.Notice("Shutting down");
+            Timer.Dispose();
+            Manager.Terminate();
+        }
     }
-  }
 }

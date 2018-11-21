@@ -1,13 +1,6 @@
-################################################################################
-# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
-################################################################################
-
-/Cronical/bin/Debug
-/Cronical/obj/Debug
-/CronicalTest/bin/Debug
-/CronicalTest/obj/Debug
-Cronical/bin/
-Cronical/obj/
-CronicalTest/bin/
-CronicalTest/obj/
 TestResults/
+.vs/
+obj/
+bin/
+*.user
+/Release

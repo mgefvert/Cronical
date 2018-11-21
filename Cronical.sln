@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.106
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cronical", "Cronical\Cronical.csproj", "{85D964B2-CFF6-4EE7-AB09-DB0E74CC9923}"
 EndProject
@@ -9,15 +9,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cronical.Test", "CronicalTe
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{15786DD8-C98E-4BE8-9341-A6A274631DEF}"
 	ProjectSection(SolutionItems) = preProject
+		CHANGELOG = CHANGELOG
 		LICENSE = LICENSE
 		README.md = README.md
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Binaries", "Binaries", "{AF11643E-14D3-4E6F-A29D-1E594B7A37B0}"
-	ProjectSection(SolutionItems) = preProject
-		Binaries\cronical.dat = Binaries\cronical.dat
-		Binaries\Cronical.exe = Binaries\Cronical.exe
-		Binaries\Cronical.exe.config = Binaries\Cronical.exe.config
 	EndProjectSection
 EndProject
 Global
@@ -37,5 +31,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3075C01B-5B4C-4E09-8B7A-04D8271631FD}
 	EndGlobalSection
 EndGlobal

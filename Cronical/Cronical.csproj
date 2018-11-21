@@ -51,7 +51,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Configuration\ConfigReader.cs" />
     <Compile Include="Configuration\Config.cs" />
     <Compile Include="InjectCtrlC.cs" />
@@ -72,6 +71,7 @@
     <Compile Include="Misc\StringHelper.cs" />
     <Compile Include="Misc\StringParser.cs" />
     <Compile Include="Configuration\CommandLineOptions.cs" />
+    <Compile Include="Misc\TextTools.cs" />
     <Compile Include="Service.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -98,10 +98,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy /y $(TargetPath) $(SolutionDir)\Binaries
-copy /y $(TargetPath).config $(SolutionDir)\Binaries
-copy /y $(TargetDir)\cronical.dat $(SolutionDir)\Binaries\cronical.dat
-</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

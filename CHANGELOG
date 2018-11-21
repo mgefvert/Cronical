@@ -1,0 +1,8 @@
+CHANGELOG
+
+
+Release 1.1 - 2018-11-20
+
+* Code:    Code cleanup
+* Code:    Builds have version numbers and use proper releases
+* Feature: Comments can be used in definition lines now as well

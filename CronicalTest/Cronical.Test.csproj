@@ -57,10 +57,12 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Configuration\ConfigReaderTest.cs" />
     <Compile Include="Jobs\ServiceJobTest.cs" />
     <Compile Include="Misc\ProcessParametersTest.cs" />
     <Compile Include="Misc\ProcessWrapperTest.cs" />
     <Compile Include="CronManagerTest.cs" />
+    <Compile Include="Misc\SendEmailEncodingsTest.cs" />
     <Compile Include="MockMailSender.cs" />
     <Compile Include="Misc\SendEmailTest.cs" />
     <Compile Include="Configuration\SettingsTest.cs" />

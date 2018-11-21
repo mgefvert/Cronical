@@ -55,6 +55,8 @@ that directive (until the next directive overrides it).
 
 Any change to the cronical.dat file will be automatically and quickly detected by Cronical and it will reload and reparse the file.
 
+Text starting with # is used for comments and may occur anywhere in the file. To use # in an actual command, escape it with a backslash, e.g. "\#".
+
 ## Running services
 
 Cronical is also capable of running services - that is, starting jobs and keeping them running, watching them so they don't disappear (and restarting them if they stop).

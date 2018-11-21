@@ -5,23 +5,23 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Cronical.Test.Jobs
 {
-  [TestClass]
-  public class ServiceJobTest
-  {
-    [TestMethod]
-    public void TestGetCode()
+    [TestClass]
+    public class ServiceJobTest
     {
-      var job = new ServiceJob
-      {
-        Command = "process.exe",
-        Settings = new Settings
+        [TestMethod]
+        public void TestGetCode()
         {
-          Home = "c:\\windows",
-          Timeout = 86400
-        }
-      };
+            var job = new ServiceJob
+            {
+                Command = "process.exe",
+                Settings = new Settings
+                {
+                    Home = "c:\\windows",
+                    Timeout = 86400
+                }
+            };
 
-      Assert.AreEqual("ServiceJob,process.exe,c:\\windows,False,,,,,False,,,False,,86400", job.GetJobCode());
+            Assert.AreEqual("ServiceJob,process.exe,c:\\windows,False,,,,,False,,,False,,86400", job.GetJobCode());
+        }
     }
-  }
 }

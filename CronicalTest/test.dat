@@ -7,3 +7,5 @@
 @weekly      cmd /c echo Weekly
 @daily       cmd /c echo Daily
 @hourly      cmd /c echo Hourly
+
+* * * * *    cmd /c echo \# This should be visible        # But not this, this is a comment
