@@ -215,7 +215,7 @@ namespace Cronical.Jobs
                 case "monday":
                     return "1";
                 case "tue":
-                case "tueday":
+                case "tuesday":
                     return "2";
                 case "wed":
                 case "wednesday":
