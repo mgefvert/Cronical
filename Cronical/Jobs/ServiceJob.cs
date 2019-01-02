@@ -1,7 +1,7 @@
 ﻿using System;
 using Cronical.Configuration;
-using Cronical.Logging;
 using Cronical.Misc;
+using DotNetCommons.Logging;
 
 namespace Cronical.Jobs
 {

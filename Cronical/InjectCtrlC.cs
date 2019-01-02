@@ -3,8 +3,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using Cronical.Logging;
-using Cronical.Misc;
+using DotNetCommons.Logging;
+using DotNetCommons.Security;
 
 namespace Cronical
 {
@@ -30,13 +30,13 @@ namespace Cronical
 
             var result = Process.Start(start);
             if (result == null)
-                Logger.Warn("CtrlC: Unable to start kill process: " + cmd);
+                Logger.Warning("CtrlC: Unable to start kill process: " + cmd);
         }
 
         internal static void Handle(string[] args)
         {
             var pid = int.Parse(args.ElementAt(1));
-            var checksum = int.Parse(args.ElementAt(2));
+            var checksum = uint.Parse(args.ElementAt(2));
 
             if (Checksum(pid) != checksum)
                 throw new Exception("CtrlC: Checksum fails.");
@@ -55,7 +55,7 @@ namespace Cronical
             // Should not go past this point...
         }
 
-        private static int Checksum(int pid)
+        private static uint Checksum(int pid)
         {
             return Crc32.ComputeChecksum(Encoding.ASCII.GetBytes("Lb34c2enjDmD9Zv4MS8xaCB" + pid));
         }

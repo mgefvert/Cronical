@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Cronical.Jobs;
-using Cronical.Logging;
+using DotNetCommons.Logging;
 
 namespace Cronical.Configuration
 {
@@ -55,12 +55,12 @@ namespace Cronical.Configuration
             if (Settings.Exists(args.Definition))
                 Settings.Set(args.Definition, args.Value);
             else
-                Logger.Error("Invalid definition: {0}", args.Definition);
+                Logger.Error($"Invalid definition: {args.Definition}");
         }
 
         private void ConfigReaderOnInvalidConfig(object sender, ConfigReader.InvalidConfigArgs args)
         {
-            Logger.Error("Invalid definition on line {0}: {1}", args.LineNo, args.Text);
+            Logger.Error($"Invalid definition on line {args.LineNo}: {args.Text}");
         }
 
         private void ConfigReaderOnJobRead(object sender, ConfigReader.JobArgs jobArgs)

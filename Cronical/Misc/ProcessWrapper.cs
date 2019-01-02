@@ -4,7 +4,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
-using Cronical.Logging;
+using DotNetCommons.Logging;
+using DotNetCommons.Text;
 
 namespace Cronical.Misc
 {
@@ -151,7 +152,7 @@ namespace Cronical.Misc
             }
 
             // If the client hasn't exited now, there's not much more to do.
-            Logger.Warn("Service failed to terminate.");
+            Logger.Warning("Service failed to terminate.");
         }
 
         public void WaitForEnd(int timeout)
@@ -161,7 +162,7 @@ namespace Cronical.Misc
 
             if (!Process.WaitForExit(timeout))
             {
-                Logger.Warn("Job failed to end, terminating program");
+                Logger.Warning("Job failed to end, terminating program");
                 Logger.Catch(Stop);
             }
 

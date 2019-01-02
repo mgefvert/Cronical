@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DotNetCommons.Text;
 
 namespace Cronical.Misc
 {
@@ -156,7 +157,7 @@ namespace Cronical.Misc
                 }
                 else if (!inQuote && separators.Contains(c))
                 {
-                    source = source.SafeSubstring(i + 1);             // Found separator outside of quote, cut and return
+                    source = source.Mid(i + 1);             // Found separator outside of quote, cut and return
                     return result.ToString();
                 }
                 else if (!inQuote && commentchars.Contains(c))

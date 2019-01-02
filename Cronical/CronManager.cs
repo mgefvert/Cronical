@@ -2,8 +2,8 @@
 using System.Linq;
 using Cronical.Configuration;
 using Cronical.Jobs;
-using Cronical.Logging;
-using Cronical.Misc;
+using DotNetCommons.Collections;
+using DotNetCommons.Logging;
 using Microsoft.Win32;
 
 namespace Cronical
@@ -25,7 +25,7 @@ namespace Cronical
 
             Config = new Config(Filename);
             LastFileDate = Config.FileDate;
-            Logger.Log("{0} jobs in job list", Config.Jobs.Count);
+            Logger.Log($"{Config.Jobs.Count} jobs in job list");
 
             RunBootJobs();
 
@@ -55,7 +55,7 @@ namespace Cronical
 
             // It's important to compare Config.Jobs first, since the "both" result will have items
             // from the first List - and the first list has all the Process identifiers, not newConfig.
-            var result = ListHelper.Intersect(Config.Jobs, newConfig.Jobs,
+            var result = CollectionExtensions.Intersect(Config.Jobs, newConfig.Jobs,
               (job1, job2) => string.Compare(job1.GetJobCode(), job2.GetJobCode(), StringComparison.InvariantCulture));
 
             Config.Jobs.Clear();
@@ -74,8 +74,8 @@ namespace Cronical
             foreach (var job in result.Left)
             {
                 Logger.Log("Removing old " + job.GetType().Name + ": " + job.Command);
-                if (job is ServiceJob)
-                    ((ServiceJob)job).Terminate();
+                if (job is ServiceJob serviceJob)
+                    serviceJob.Terminate();
             }
         }
 
@@ -131,8 +131,7 @@ namespace Cronical
                 if (_lastDate < DateTime.Today)
                 {
                     _lastDate = DateTime.Today;
-                    Logger.Log("Tick: Hello! I have {0} upcoming jobs today and {1} services running.",
-                      Config.CronJobs.Count(x => x.NextExecTime.Date == _lastDate), Config.ServiceJobs.Count());
+                    Logger.Log($"Tick: Hello! I have {Config.CronJobs.Count(x => x.NextExecTime.Date == _lastDate)} upcoming jobs today and {Config.ServiceJobs.Count()} services running.");
                 }
             }
             catch (Exception ex)

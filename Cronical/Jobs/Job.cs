@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
 using Cronical.Configuration;
-using Cronical.Logging;
 using Cronical.Misc;
+using DotNetCommons.Logging;
 
 namespace Cronical.Jobs
 {
@@ -15,7 +15,7 @@ namespace Cronical.Jobs
         {
             var process = new ProcessParameters(Command, Settings.Home);
             if (!File.Exists(process.Executable))
-                Logger.Warn("File " + process.Executable + " does not seem to exist");
+                Logger.Warning($"File {process.Executable} does not seem to exist");
         }
 
         public virtual string GetJobCode()

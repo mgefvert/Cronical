@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
-using Cronical.Misc;
+using DotNetCommons.Collections;
 
 // ReSharper disable LocalizableElement
 

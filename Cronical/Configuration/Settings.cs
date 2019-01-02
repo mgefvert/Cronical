@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
-using Cronical.Logging;
+using DotNetCommons.Logging;
 
 namespace Cronical.Configuration
 {
@@ -46,14 +46,14 @@ namespace Cronical.Configuration
                 if (bool.TryParse(value, out var val))
                     prop.SetValue(this, val, null);
                 else
-                    Logger.Error("Value '{0}' is not recognized as a boolean value", value);
+                    Logger.Error($"Value '{value}' is not recognized as a boolean value");
             }
             else if (prop.PropertyType == typeof(int))
             {
                 if (int.TryParse(value, out var val))
                     prop.SetValue(this, val, null);
                 else
-                    Logger.Error("Value '{0}' is not recognized as an integer value", value);
+                    Logger.Error($"Value '{value}' is not recognized as an integer value");
             }
             else
                 prop.SetValue(this, value, null);

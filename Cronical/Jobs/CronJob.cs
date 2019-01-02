@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Cronical.Configuration;
-using Cronical.Logging;
 using Cronical.Misc;
+using DotNetCommons.Logging;
 
 namespace Cronical.Jobs
 {
@@ -61,7 +61,7 @@ namespace Cronical.Jobs
                     Months.Get(test.Month - 1) && Weekdays.Get((int)test.DayOfWeek))
                 {
                     NextExecTime = test;
-                    Logger.Debug("Next job start {0} for {1}", NextExecTime, Command);
+                    Logger.Debug($"Next job start {NextExecTime} for {Command}");
                     return;
                 }
 
@@ -70,7 +70,7 @@ namespace Cronical.Jobs
 
             // This shouldn't really happen.
             NextExecTime = Never;
-            Logger.Warn("No start time for job found: " + Command);
+            Logger.Warning("No start time for job found: " + Command);
         }
 
         public void Run()
@@ -91,7 +91,7 @@ namespace Cronical.Jobs
                 Logger.Log("Starting job: " + Command);
                 process.Start();
 
-                Logger.Debug("Process started, waiting at most {0} seconds", Settings.Timeout);
+                Logger.Debug($"Process started, waiting at most {Settings.Timeout} seconds");
                 process.WaitForEnd(Settings.Timeout * 1000);
                 output = process.FetchResult();
 

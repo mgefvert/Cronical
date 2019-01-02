@@ -5,8 +5,8 @@ using System.Reflection;
 using System.ServiceProcess;
 using System.Threading;
 using Cronical.Configuration;
-using Cronical.Logging;
 using Cronical.Misc;
+using DotNetCommons.Logging;
 
 namespace Cronical
 {
@@ -27,9 +27,9 @@ namespace Cronical
                     Directory.SetCurrentDirectory(path);
 
                 // Initialize the logging system
-                Logger.Configuration.Path = path;
-                Logger.Configuration.ProcessName = "cronical";
-                Logger.Configuration.Retention = 3;
+                Logger.Configuration.Directory = path;
+                Logger.Configuration.Name = "cronical";
+                Logger.Configuration.MaxRotations = 3;
 
                 // CTRL-C subprocess handler
                 if ((args.FirstOrDefault() ?? "") == "ctrlc")
@@ -44,7 +44,7 @@ namespace Cronical
                 if (!File.Exists(_opts.ConfigFile))
                     throw new FileNotFoundException("Can't find cron data file " + _opts.ConfigFile);
 
-                Logger.Configuration.Severity = _opts.DebugLogs ? LogSeverity.Debug : LogSeverity.Default;
+                Logger.Configuration.Severity = _opts.DebugLogs ? LogSeverity.Debug : LogSeverity.Normal;
                 Logger.Notice("Cronical booting up");
 
                 var service = new Service { Filename = _opts.ConfigFile };

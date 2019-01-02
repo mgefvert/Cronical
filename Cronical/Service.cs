@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ServiceProcess;
 using System.Threading;
-using Cronical.Logging;
+using DotNetCommons.Logging;
 
 namespace Cronical
 {
@@ -19,7 +19,7 @@ namespace Cronical
         public void Initialize()
         {
             Logger.Notice("Process startup");
-            Logger.Log("Using definition file " + Filename);
+            Logger.Log($"Using definition file {Filename}");
 
             Manager = new CronManager(Filename);
             Timer = new Timer(x => Manager.Tick(), null, 1000, 15000);

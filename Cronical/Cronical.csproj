@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Cronical</RootNamespace>
     <AssemblyName>Cronical</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
@@ -55,12 +55,6 @@
     <Compile Include="Configuration\Config.cs" />
     <Compile Include="InjectCtrlC.cs" />
     <Compile Include="Jobs\Job.cs" />
-    <Compile Include="Logging\LogConfiguration.cs" />
-    <Compile Include="Logging\Logger.cs" />
-    <Compile Include="Logging\FileLogMethod.cs" />
-    <Compile Include="Logging\ILogMethod.cs" />
-    <Compile Include="Misc\Crc32.cs" />
-    <Compile Include="Misc\ListHelper.cs" />
     <Compile Include="Misc\ProcessParameters.cs" />
     <Compile Include="Misc\ProcessWrapper.cs" />
     <Compile Include="Misc\MailSender.cs" />
@@ -68,10 +62,8 @@
     <Compile Include="Configuration\Settings.cs" />
     <Compile Include="CronManager.cs" />
     <Compile Include="Misc\ServiceHelper.cs" />
-    <Compile Include="Misc\StringHelper.cs" />
     <Compile Include="Misc\StringParser.cs" />
     <Compile Include="Configuration\CommandLineOptions.cs" />
-    <Compile Include="Misc\TextTools.cs" />
     <Compile Include="Service.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -95,6 +87,12 @@
     <None Include="cronical.dat">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DotNetCommons\src\DotNetCommons\DotNetCommons.csproj">
+      <Project>{41ED4443-0D88-4BF4-8E60-2292CD85D32D}</Project>
+      <Name>DotNetCommons</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

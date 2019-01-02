@@ -11,9 +11,9 @@ namespace Cronical.Misc
         private static extern int SearchPath(string lpPath, string lpFileName, string lpExtension, int nBufferLength,
           [MarshalAs(UnmanagedType.LPTStr)] StringBuilder lpBuffer, out IntPtr lpFilePart);
 
-        public string Executable { get; private set; }
-        public string Directory { get; private set; }
-        public string Parameters { get; private set; }
+        public string Executable { get; }
+        public string Directory { get; }
+        public string Parameters { get; }
 
         public ProcessParameters(string command, string home)
         {
