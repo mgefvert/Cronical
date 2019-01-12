@@ -1,0 +1,9 @@
+CHECKLIST for new versions
+
+* Run all unit tests
+* Update submodules
+* Update assembly release version
+* Build
+* Update CHANGELOG
+* Review README
+* Commit & push

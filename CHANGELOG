@@ -1,5 +1,17 @@
 CHANGELOG
 
+Release 1.3 - TBD
+
+* Feature: Services are now shut down in parallel, which is significantly faster.
+* Feature: Internal checks are done every second, for config file changes and service processes.
+* Feature: Service process check timer can be configured separately with a new directive (default is every second).
+* Code:    .NET Framework dependency updated to 4.7.2.
+
+
+Release 1.2 - 2018-12-29
+
+* Fixes:   Email improvements (utf8 support etc)
+
 
 Release 1.1 - 2018-11-20
 
