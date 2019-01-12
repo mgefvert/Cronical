@@ -6,21 +6,25 @@ if ""=="%LIBPATH%" (
 )
 
 setlocal
-set bindir=cronical\bin\release
+set BINDIR=cronical\bin\release
+set LINK=%HOMEDRIVE%%HOMEPATH%\.nuget\packages\ilrepack\2.0.16\tools\ilrepack
+
 
 echo.
-echo = Cronical
+echo === Building
+
 msbuild Cronical.sln /v:minimal /p:Configuration=Release
 if errorlevel 1 goto :error
 
+
 echo.
-echo = Copying binaries
+echo === Copying and linking to binaries
+
 if exist Binaries rd /s /q Binaries
 md Binaries
-
-for %%f in (cronical.exe cronical.exe.config cronical.dat) do (
-    copy cronical\bin\release\%%f binaries
-)
+%LINK% /out:Binaries\Cronical.exe /v4 %BINDIR%\Cronical.exe %BINDIR%\DotNetCommons.dll
+copy %BINDIR%\cronical.dat binaries
+del binaries\*.pdb
 
 echo.
 echo = Done

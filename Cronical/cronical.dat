@@ -32,7 +32,7 @@
 # === Global settings ===
 
 RunMissedJobs = true            # On startup, run any missed jobs
-ServiceChecks = 60              # Check services every 60 seconds, default is zero (on every 1-second tick)
+ServiceChecks = 15              # Check services every 15 seconds, default is every second
 Timeout       = 3600            # Jobs may run for up to 1 hour
 
 

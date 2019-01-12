@@ -96,8 +96,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="ILMerge">
-      <Version>3.0.21</Version>
+    <PackageReference Include="ILRepack">
+      <Version>2.0.16</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
