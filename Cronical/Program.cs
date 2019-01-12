@@ -63,7 +63,7 @@ namespace Cronical
                     return 0;
                 }
 
-                if (_opts.Console)
+                if (_opts.RunAsConsole)
                 {
                     Logger.Log("Starting Cronical as a console program...");
                     RunStandalone(service);

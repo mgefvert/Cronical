@@ -21,7 +21,7 @@ namespace Cronical.Test.Jobs
                 }
             };
 
-            Assert.AreEqual("ServiceJob,process.exe,c:\\windows,False,,,,,False,,,False,,86400", job.GetJobCode());
+            Assert.AreEqual("ServiceJob,process.exe,c:\\windows,False,,,,,,,False,", job.GetJobCode());
         }
     }
 }

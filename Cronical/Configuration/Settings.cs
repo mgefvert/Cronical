@@ -5,20 +5,29 @@ using DotNetCommons.Logging;
 
 namespace Cronical.Configuration
 {
+    public class GlobalSettingAttribute : Attribute
+    {
+    }
+
     public class Settings
     {
+        [GlobalSetting]
+        public bool RunMissedJobs { get; set; }
+        [GlobalSetting]
+        public int ServiceChecks { get; set; }
+        [GlobalSetting]
+        public int Timeout { get; set; }
+
         public string Home { get; set; }
         public bool MailStdOut { get; set; }
         public string MailCc { get; set; }
         public string MailBcc { get; set; }
         public string MailFrom { get; set; }
         public string MailTo { get; set; }
-        public bool RunMissedJobs { get; set; }
         public string SmtpHost { get; set; }
         public string SmtpPass { get; set; }
         public bool SmtpSSL { get; set; }
         public string SmtpUser { get; set; }
-        public int Timeout { get; set; }
 
         public Settings()
         {
@@ -61,8 +70,13 @@ namespace Cronical.Configuration
 
         public override string ToString()
         {
-            return string.Join(",", GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public)
-              .Select(p => (p.GetValue(this, null) ?? "").ToString()));
+            // Build a list of settings, but don't include global settings in job code comparisons
+            var props = GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                .Where(p => p.GetCustomAttribute<GlobalSettingAttribute>() == null)
+                .Select(p => (p.GetValue(this, null) ?? "").ToString())
+                .ToList();
+
+            return string.Join(",", props);
         }
     }
 }

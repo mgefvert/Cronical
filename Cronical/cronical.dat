@@ -28,10 +28,13 @@
 #
 # @service               cmd /k echo Start and keep running, restarting if it exits
 
+
 # === Global settings ===
 
-RunMissedJobs = true
-Timeout       = 3600
+RunMissedJobs = true            # On startup, run any missed jobs
+ServiceChecks = 60              # Check services every 60 seconds, default is zero (on every 1-second tick)
+Timeout       = 3600            # Jobs may run for up to 1 hour
+
 
 # === Settings for each job ===
 
@@ -46,8 +49,11 @@ SmtpSSL       = false
 # SmtpUser    = 
 # SmtpPass    = 
 
+
 # === Jobs to run ===
 
-# In order to run apps as a different user - for instance, for backuping registry - either register
+# In order to run apps as a different user - for instance, for backing up registry - either register
 # the service under a different user name in Services, or use the psexec utility to impersonate
 # another user. See http://technet.microsoft.com/en-us/sysinternals/bb897553.aspx
+
+@reboot cmd /c echo Hello, world!

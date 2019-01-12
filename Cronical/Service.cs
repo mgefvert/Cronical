@@ -22,7 +22,7 @@ namespace Cronical
             Logger.Log($"Using definition file {Filename}");
 
             Manager = new CronManager(Filename);
-            Timer = new Timer(x => Manager.Tick(), null, 1000, 15000);
+            Timer = new Timer(x => Manager.Tick(), null, 1000, 1000);
         }
 
         protected override void OnStart(string[] args)

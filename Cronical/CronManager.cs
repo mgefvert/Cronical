@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Cronical.Configuration;
 using Cronical.Jobs;
 using DotNetCommons.Collections;
@@ -15,15 +17,18 @@ namespace Cronical
         public string Filename { get; }
         public Config Config { get; }
         protected DateTime LastFileDate;
-        protected int ServiceCounter;
         private DateTime _lastDate;
+        private DateTime _lastService;
         private volatile bool _inTick;
+        private readonly object _lock = new object();
 
         public CronManager(string filename)
         {
             Filename = filename;
 
             Config = new Config(Filename);
+            Config.DisplaySettingsInfo();
+
             LastFileDate = Config.FileDate;
             Logger.Log($"{Config.Jobs.Count} jobs in job list");
 
@@ -53,6 +58,9 @@ namespace Cronical
             var newConfig = new Config(Filename);
             LastFileDate = newConfig.FileDate;
 
+            Config.Settings = newConfig.Settings;
+            Config.DisplaySettingsInfo();
+            
             // It's important to compare Config.Jobs first, since the "both" result will have items
             // from the first List - and the first list has all the Process identifiers, not newConfig.
             var result = CollectionExtensions.Intersect(Config.Jobs, newConfig.Jobs,
@@ -71,12 +79,8 @@ namespace Cronical
             }
 
             // End service jobs no longer existing
-            foreach (var job in result.Left)
-            {
-                Logger.Log("Removing old " + job.GetType().Name + ": " + job.Command);
-                if (job is ServiceJob serviceJob)
-                    serviceJob.Terminate();
-            }
+            result.Left.ForEach(job => Logger.Log("Removing old " + job.GetType().Name + ": " + job.Command));
+            TerminateJobs(result.Left.OfType<ServiceJob>());
         }
 
         public void RunBootJobs()
@@ -93,54 +97,76 @@ namespace Cronical
 
         public void Terminate()
         {
-            foreach (var job in Config.ServiceJobs)
-                Logger.Catch(job.Terminate);
-
+            TerminateJobs(Config.ServiceJobs);
             SaveDateTime();
+        }
+
+        public static void TerminateJobs(IEnumerable<ServiceJob> services)
+        {
+            var options = new ParallelOptions { MaxDegreeOfParallelism = 10 };
+            Parallel.ForEach(services, options, job =>
+            {
+                try
+                {
+                    job.Terminate();
+                }
+                catch (Exception e)
+                {
+                    Logger.Error(e);
+                }
+            });
         }
 
         public void Tick()
         {
             if (_inTick)
-                Logger.Log("Cannot enter Tick() - another thread already running");
+                return;
 
-            _inTick = true;
-            try
+            lock (_lock)
             {
-                if (HasConfigChanged())
-                {
-                    Logger.Log("Definition file change detected");
-                    Reload();
-                    Logger.Log("All jobs reloaded");
-                }
+                if (_inTick)
+                    return;
 
-                // Find any jobs that we've passed the Next Exec Time and run them.
-                var now = DateTime.Now;
-                foreach (var job in Config.CronJobs.Where(job => job.NextExecTime <= now))
-                    job.Run();
-
-                // Only check service jobs every minute
-                if (ServiceCounter++ % 4 == 0)
+                _inTick = true;
+                try
                 {
-                    foreach (var job in Config.ServiceJobs.Where(job => !job.IsRunning()))
+                    if (HasConfigChanged())
+                    {
+                        Logger.Log("Definition file change detected");
+                        Reload();
+                        Logger.Log("All jobs reloaded");
+                    }
+
+                    // Find any jobs that we've passed the Next Exec Time and run them.
+                    var now = DateTime.Now;
+                    foreach (var job in Config.CronJobs.Where(job => job.NextExecTime <= now))
                         job.Run();
+
+                    // Check on service jobs
+                    if ((now - _lastService).TotalSeconds > Config.Settings.ServiceChecks)
+                    {
+                        Logger.Debug("Checking services");
+                        _lastService = now;
+                        foreach (var job in Config.ServiceJobs.Where(job => !job.CheckIsRunning()))
+                            job.Run();
+                    }
+
+                    SaveDateTime();
+
+                    if (_lastDate < DateTime.Today)
+                    {
+                        _lastDate = DateTime.Today;
+                        Logger.Log($"Hello! I have {Config.CronJobs.Count(x => x.NextExecTime.Date == _lastDate)} upcoming jobs today and {Config.ServiceJobs.Count()} services running.");
+                    }
                 }
-
-                SaveDateTime();
-
-                if (_lastDate < DateTime.Today)
+                catch (Exception ex)
                 {
-                    _lastDate = DateTime.Today;
-                    Logger.Log($"Tick: Hello! I have {Config.CronJobs.Count(x => x.NextExecTime.Date == _lastDate)} upcoming jobs today and {Config.ServiceJobs.Count()} services running.");
+                    Logger.Error("Exception in Tick(): " + ex.GetType().Name + ": " + ex.Message);
                 }
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("Exception in Tick(): " + ex.GetType().Name + ": " + ex.Message);
-            }
-            finally
-            {
-                _inTick = false;
+                finally
+                {
+                    _inTick = false;
+                }
             }
         }
     }

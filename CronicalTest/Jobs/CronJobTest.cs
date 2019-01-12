@@ -32,7 +32,7 @@ namespace Cronical.Test.Jobs
                 Timeout = 86400
             });
 
-            Assert.AreEqual("CronJob,process.exe,c:\\windows,False,,,,,False,,,False,,86400,,127,1365,2147483647,16777215,35185445863425", job.GetJobCode());
+            Assert.AreEqual("CronJob,process.exe,c:\\windows,False,,,,,,,False,,,127,1365,2147483647,16777215,35185445863425", job.GetJobCode());
         }
 
         [TestMethod]

@@ -77,8 +77,7 @@ namespace Cronical.Jobs
         {
             RecalcNextExecTime();
 
-            var thread = new Thread(() => RunJobThread());
-            thread.Start();
+            new Thread(() => RunJobThread()).Start();
         }
 
         public string RunJobThread()

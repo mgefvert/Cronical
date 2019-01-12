@@ -54,6 +54,7 @@
     <Compile Include="Configuration\ConfigReader.cs" />
     <Compile Include="Configuration\Config.cs" />
     <Compile Include="InjectCtrlC.cs" />
+    <Compile Include="Jobs\JobState.cs" />
     <Compile Include="Jobs\Job.cs" />
     <Compile Include="Misc\ProcessParameters.cs" />
     <Compile Include="Misc\ProcessWrapper.cs" />
