@@ -1,7 +1,7 @@
 # Cronical
 
-* Current (stable) release version: 1.2
-* Master branch version: 1.3 (beta)
+* Current (stable) release version: 1.3
+* Master branch version: 1.3
 
 .NET-based cron daemon. Can replace Windows Services and Scheduled Tasks, typically for running service-like processes as part of an application suite - or just by itself.
 
