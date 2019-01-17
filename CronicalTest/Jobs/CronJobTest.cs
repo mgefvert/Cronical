@@ -26,7 +26,7 @@ namespace Cronical.Test.Jobs
                 Weekday = "*",
             };
 
-            var job = CronJob.Parse(args, new Settings
+            var job = CronJob.Parse(args, new JobSettings
             {
                 Home = "c:\\windows",
                 Timeout = 86400

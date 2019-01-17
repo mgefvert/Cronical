@@ -1,5 +1,4 @@
 ﻿using System;
-using Cronical.Configuration;
 using Cronical.Misc;
 using DotNetCommons.Logging;
 
@@ -80,16 +79,8 @@ namespace Cronical.Jobs
             }
         }
 
-        public static ServiceJob Parse(ConfigReader.JobArgs jobArgs, Settings settings = null)
+        public override void RecalcNextExecTime()
         {
-            if (jobArgs == null)
-                return null;
-
-            return new ServiceJob
-            {
-                Settings = settings != null ? settings.Clone() : new Settings(),
-                Command = jobArgs.Command
-            };
         }
     }
 }

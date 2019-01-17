@@ -14,7 +14,7 @@ namespace Cronical.Test.Jobs
             var job = new ServiceJob
             {
                 Command = "process.exe",
-                Settings = new Settings
+                Settings = new JobSettings
                 {
                     Home = "c:\\windows",
                     Timeout = 86400

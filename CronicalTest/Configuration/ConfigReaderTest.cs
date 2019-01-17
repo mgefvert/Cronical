@@ -10,16 +10,16 @@ namespace Cronical.Test.Configuration
         [TestMethod]
         public void TestTrimComment()
         {
-            Assert.AreEqual("", ConfigReader.TrimComment(null));
-            Assert.AreEqual("", ConfigReader.TrimComment(""));
-            Assert.AreEqual("", ConfigReader.TrimComment("   "));
-            Assert.AreEqual("Hello", ConfigReader.TrimComment(" Hello "));
-            Assert.AreEqual("", ConfigReader.TrimComment("#"));
-            Assert.AreEqual("", ConfigReader.TrimComment("##"));
-            Assert.AreEqual("Text", ConfigReader.TrimComment("Text # Comment"));
-            Assert.AreEqual("Text", ConfigReader.TrimComment("Text # Comment # Again"));
-            Assert.AreEqual("Text # More Text", ConfigReader.TrimComment("Text \\# More Text # Comment"));
-            Assert.AreEqual("Text", ConfigReader.TrimComment("Text # Comment \\"));
+            Assert.AreEqual("", ConfigReader.PreprocessLine(null));
+            Assert.AreEqual("", ConfigReader.PreprocessLine(""));
+            Assert.AreEqual("", ConfigReader.PreprocessLine("   "));
+            Assert.AreEqual("Hello", ConfigReader.PreprocessLine(" Hello "));
+            Assert.AreEqual("", ConfigReader.PreprocessLine("#"));
+            Assert.AreEqual("", ConfigReader.PreprocessLine("##"));
+            Assert.AreEqual("Text", ConfigReader.PreprocessLine("Text # Comment"));
+            Assert.AreEqual("Text", ConfigReader.PreprocessLine("Text # Comment # Again"));
+            Assert.AreEqual("Text # More Text", ConfigReader.PreprocessLine("Text \\# More Text # Comment"));
+            Assert.AreEqual("Text", ConfigReader.PreprocessLine("Text # Comment \\"));
         }
     }
 }

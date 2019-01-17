@@ -26,7 +26,7 @@ namespace Cronical.Test.Misc
             _job = new CronJob
             {
                 Command = "cmd /c type " + _path,
-                Settings = new Settings
+                Settings = new JobSettings
                 {
                     MailTo = "test@localhost",
                     MailFrom = "cronical@localhost",

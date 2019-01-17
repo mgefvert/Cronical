@@ -34,7 +34,7 @@ namespace Cronical.Misc
         /// <param name="title">Email title</param>
         /// <param name="text">Body of the email - usually a job result</param>
         /// <param name="env">The environment for this email</param>
-        public static void SendMail(string title, string text, Settings env)
+        public static void SendMail(string title, string text, JobSettings env)
         {
             if (string.IsNullOrWhiteSpace(env.MailTo) || string.IsNullOrWhiteSpace(text) || string.IsNullOrWhiteSpace(env.SmtpHost))
                 return;

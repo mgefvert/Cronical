@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Cronical.Configuration;
@@ -14,9 +15,9 @@ namespace Cronical
     {
         public const string RegKey = @"HKEY_CURRENT_USER\Software\Ciceronen\Cronical";
 
-        public string Filename { get; }
+        public FileInfo ConfigFile { get; }
         public Config Config { get; }
-        protected DateTime LastFileDate;
+        protected DateTime ConfigTime;
         private DateTime _lastDate;
         private DateTime _lastService;
         private volatile bool _inTick;
@@ -24,12 +25,12 @@ namespace Cronical
 
         public CronManager(string filename)
         {
-            Filename = filename;
+            ConfigFile = new FileInfo(filename);
+            ConfigTime = ConfigFile.LastWriteTime;
 
-            Config = new Config(Filename);
+            Config = ConfigReader.Load(ConfigFile);
             Config.DisplaySettingsInfo();
 
-            LastFileDate = Config.FileDate;
             Logger.Log($"{Config.Jobs.Count} jobs in job list");
 
             RunBootJobs();
@@ -50,13 +51,14 @@ namespace Cronical
 
         public bool HasConfigChanged()
         {
-            return Config.FileDate > LastFileDate;
+            ConfigFile.Refresh();
+            return ConfigFile.LastWriteTime > ConfigTime;
         }
 
         public void Reload()
         {
-            var newConfig = new Config(Filename);
-            LastFileDate = newConfig.FileDate;
+            var newConfig = ConfigReader.Load(ConfigFile);
+            ConfigTime = ConfigFile.LastWriteTime;
 
             Config.Settings = newConfig.Settings;
             Config.DisplaySettingsInfo();

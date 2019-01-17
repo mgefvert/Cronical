@@ -10,7 +10,7 @@ namespace Cronical.Test.Configuration
         [TestMethod]
         public void TestClone()
         {
-            var env = new Settings
+            var env = new JobSettings
             {
                 Home = "home",
                 MailTo = "to-email",
@@ -34,7 +34,7 @@ namespace Cronical.Test.Configuration
         [TestMethod]
         public void TestExists()
         {
-            var env = new Settings();
+            var env = new JobSettings();
 
             Assert.IsTrue(env.Exists("home"));
             Assert.IsTrue(env.Exists("MAILTO"));
@@ -45,7 +45,7 @@ namespace Cronical.Test.Configuration
         [TestMethod]
         public void TestSet()
         {
-            var env = new Settings();
+            var env = new JobSettings();
 
             env.Set("home", "bork");
             env.Set("MAILTO", "xxx");
@@ -58,7 +58,7 @@ namespace Cronical.Test.Configuration
         [ExpectedException(typeof(Exception), AllowDerivedTypes = true)]
         public void TestSetInvalid()
         {
-            var env = new Settings();
+            var env = new JobSettings();
             env.Set("xxx", "bork");
         }
     }

@@ -53,6 +53,8 @@
   <ItemGroup>
     <Compile Include="Configuration\ConfigReader.cs" />
     <Compile Include="Configuration\Config.cs" />
+    <Compile Include="Configuration\GlobalSettings.cs" />
+    <Compile Include="Configuration\AbstractSettings.cs" />
     <Compile Include="InjectCtrlC.cs" />
     <Compile Include="Jobs\JobState.cs" />
     <Compile Include="Jobs\Job.cs" />
@@ -60,7 +62,7 @@
     <Compile Include="Misc\ProcessWrapper.cs" />
     <Compile Include="Misc\MailSender.cs" />
     <Compile Include="Jobs\ServiceJob.cs" />
-    <Compile Include="Configuration\Settings.cs" />
+    <Compile Include="Configuration\JobSettings.cs" />
     <Compile Include="CronManager.cs" />
     <Compile Include="Misc\ServiceHelper.cs" />
     <Compile Include="Misc\StringParser.cs" />
