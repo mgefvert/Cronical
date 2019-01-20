@@ -5,7 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Cronical.Test.Configuration
 {
     [TestClass]
-    public class SettingsTest
+    public class JobSettingsTest
     {
         [TestMethod]
         public void TestClone()
@@ -47,19 +47,18 @@ namespace Cronical.Test.Configuration
         {
             var env = new JobSettings();
 
-            env.Set("home", "bork");
-            env.Set("MAILTO", "xxx");
+            Assert.IsTrue(env.Set("home", "bork"));
+            Assert.IsTrue(env.Set("MAILTO", "xxx"));
 
             Assert.AreEqual("bork", env.Home);
             Assert.AreEqual("xxx", env.MailTo);
         }
 
         [TestMethod]
-        [ExpectedException(typeof(Exception), AllowDerivedTypes = true)]
         public void TestSetInvalid()
         {
             var env = new JobSettings();
-            env.Set("xxx", "bork");
+            Assert.IsFalse(env.Set("xxx", "bork"));
         }
     }
 }

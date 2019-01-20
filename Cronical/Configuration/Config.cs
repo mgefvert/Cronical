@@ -16,9 +16,8 @@ namespace Cronical.Configuration
 
         public void DisplaySettingsInfo()
         {
-            Logger.Log($"Config: Run missed jobs on startup = {Settings.RunMissedJobs}");
-            Logger.Log($"Config: Check services every       = {Settings.ServiceChecks} seconds" + (Settings.ServiceChecks == 0 ? " (constantly)" : ""));
-            Logger.Log($"Config: Terminate cron jobs after  = {Settings.Timeout} seconds");
+            Logger.Log($"Config: Run missed jobs on startup: {Settings.RunMissedJobs}");
+            Logger.Log($"Config: Check services every: {Settings.ServiceChecks} seconds" + (Settings.ServiceChecks == 0 ? " (constantly)" : ""));
         }
     }
 }

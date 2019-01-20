@@ -7,6 +7,7 @@ using System.Threading;
 using Cronical.Configuration;
 using Cronical.Misc;
 using DotNetCommons.Logging;
+using DotNetCommons.Sys;
 
 namespace Cronical
 {
@@ -39,7 +40,7 @@ namespace Cronical
                 }
 
                 Logger.Configuration.EchoToConsole = true;
-                _opts = new CommandLineOptions(args);
+                _opts = CommandLine.Parse<CommandLineOptions>(args);
 
                 if (!File.Exists(_opts.ConfigFile))
                     throw new FileNotFoundException("Can't find cron data file " + _opts.ConfigFile);

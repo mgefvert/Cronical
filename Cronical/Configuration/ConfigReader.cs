@@ -19,14 +19,21 @@ namespace Cronical.Configuration
 
         public static Config Load(FileInfo file)
         {
-            var result = new Config();
+            using (var fs = new FileStream(file.FullName, FileMode.Open, FileAccess.Read))
+            {
+                return Load(fs, file.DirectoryName);
+            }
+        }
+
+        public static Config Load(Stream stream, string homedir)
+        {
             var jobsettings = new JobSettings
             {
-                Home = file.DirectoryName
+                Home = homedir
             };
 
-            using (var fs = new FileStream(file.FullName, FileMode.Open, FileAccess.Read))
-            using (var reader = new StreamReader(fs))
+            var result = new Config();
+            using (var reader = new StreamReader(stream))
             {
                 var c = 0;
                 while (!reader.EndOfStream)
@@ -71,7 +78,7 @@ namespace Cronical.Configuration
             if (string.IsNullOrEmpty(line))
                 return null;
 
-            var result = new StringBuilder(line.Length);
+            var sb = new StringBuilder(line.Length);
             for (var i = 0; i < line.Length; i++)
             {
                 var c = line[i];
@@ -79,7 +86,7 @@ namespace Cronical.Configuration
                 // \#
                 if (c == '\\' && i < line.Length && line[i + 1] == '#')
                 {
-                    result.Append('#');
+                    sb.Append('#');
                     i++;
                     continue;
                 }
@@ -87,10 +94,11 @@ namespace Cronical.Configuration
                 if (c == '#')
                     break;
 
-                result.Append(c);
+                sb.Append(c);
             }
 
-            return result.ToString().Trim();
+            var result = sb.ToString().Trim();
+            return string.IsNullOrEmpty(result) ? null : result;
         }
 
         private static Command TryParseCommand(string line)
@@ -100,6 +108,12 @@ namespace Cronical.Configuration
             var eq = StringParser.ExtractWord(ref s);
 
             return eq != "=" ? null : new Command { Name = cmd, Value = s };
+        }
+
+        public static Job ParseJob(string line, JobSettings settings = null)
+        {
+            return TryParseJob(line, settings ?? new JobSettings()) 
+                   ?? throw new Exception($"Unable to interpret job definition: '{line}'");
         }
 
         private static Job TryParseJob(string line, JobSettings settings)
@@ -145,13 +159,13 @@ namespace Cronical.Configuration
             {
                 var result = new CronJob
                 {
-                    Command  = definition,
                     Settings = settings.Clone(),
                     Minutes  = ParseValue(StringParser.ExtractWord(ref definition), 60, 0, 59, false),
                     Hours    = ParseValue(StringParser.ExtractWord(ref definition), 24, 0, 23, false),
                     Days     = ParseValue(StringParser.ExtractWord(ref definition), 31, 1, 31, false),
                     Months   = ParseValue(StringParser.ExtractWord(ref definition), 12, 1, 12, false),
-                    Weekdays = ParseValue(StringParser.ExtractWord(ref definition),  7, 0,  6, true)
+                    Weekdays = ParseValue(StringParser.ExtractWord(ref definition),  7, 0,  6, true),
+                    Command  = definition
                 };
 
                 return result;

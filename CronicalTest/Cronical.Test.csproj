@@ -57,6 +57,8 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Configuration\CommandLineOptionsTest.cs" />
+    <Compile Include="Configuration\AbstractSettingsTest.cs" />
     <Compile Include="Configuration\ConfigReaderTest.cs" />
     <Compile Include="Jobs\ServiceJobTest.cs" />
     <Compile Include="Misc\ProcessParametersTest.cs" />
@@ -65,7 +67,7 @@
     <Compile Include="Misc\SendEmailEncodingsTest.cs" />
     <Compile Include="MockMailSender.cs" />
     <Compile Include="Misc\SendEmailTest.cs" />
-    <Compile Include="Configuration\SettingsTest.cs" />
+    <Compile Include="Configuration\JobSettingsTest.cs" />
     <Compile Include="Jobs\CronJobTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -74,11 +76,16 @@
       <Project>{85d964b2-cff6-4ee7-ab09-db0e74cc9923}</Project>
       <Name>Cronical</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DotNetCommons\src\DotNetCommons\DotNetCommons.csproj">
+      <Project>{41ED4443-0D88-4BF4-8E60-2292CD85D32D}</Project>
+      <Name>DotNetCommons</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="test.dat">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <EmbeddedResource Include="TestData\cronical.dat" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

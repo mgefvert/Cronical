@@ -16,6 +16,7 @@ namespace Cronical.Configuration
         public string SmtpPass { get; set; }
         public bool SmtpSSL { get; set; }
         public string SmtpUser { get; set; }
+        public int Timeout { get; set; } = 86400;
 
         public JobSettings Clone()
         {

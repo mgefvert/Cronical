@@ -16,7 +16,7 @@ namespace Cronical.Misc
         /// </summary>
         /// <param name="bitArray">The BitArray to extract</param>
         /// <returns>The ulong value contained in the BitArray.</returns>
-        public static long Val(this BitArray bitArray)
+        public static ulong Val(this BitArray bitArray)
         {
             if (bitArray.Length > 64)
                 throw new ArgumentException("BitArray is longer than 64 bits.");
@@ -24,7 +24,7 @@ namespace Cronical.Misc
             var array = new byte[8];
             bitArray.CopyTo(array, 0);
 
-            return BitConverter.ToInt64(array, 0);
+            return BitConverter.ToUInt64(array, 0);
         }
 
         /// <summary>

@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading;
-using Cronical.Configuration;
 using Cronical.Misc;
 using DotNetCommons.Logging;
 
