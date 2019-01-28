@@ -16,6 +16,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetCommons", "DotNetCommons\src\DotNetCommons\DotNetCommons.csproj", "{41ED4443-0D88-4BF4-8E60-2292CD85D32D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cronical.MySql", "Cronical.MySql\Cronical.MySql.csproj", "{C88F66EE-0A05-42AA-977B-8D3745888321}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,6 +36,10 @@ Global
 		{41ED4443-0D88-4BF4-8E60-2292CD85D32D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{41ED4443-0D88-4BF4-8E60-2292CD85D32D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{41ED4443-0D88-4BF4-8E60-2292CD85D32D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C88F66EE-0A05-42AA-977B-8D3745888321}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C88F66EE-0A05-42AA-977B-8D3745888321}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C88F66EE-0A05-42AA-977B-8D3745888321}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C88F66EE-0A05-42AA-977B-8D3745888321}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

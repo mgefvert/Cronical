@@ -1,5 +1,6 @@
 ﻿using System;
 using Cronical.Configuration;
+using Cronical.Integrations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 // ReSharper disable LocalizableElement
@@ -12,7 +13,7 @@ namespace Cronical.Test.Jobs
         [TestMethod]
         public void TestGetCode()
         {
-            var job = ConfigReader.ParseJob("0,15,30,45 * * */2 * process.exe", new JobSettings
+            var job = FileConfigReader.ParseJob("0,15,30,45 * * */2 * process.exe", new JobSettings
             {
                 Home = "c:\\windows",
                 Timeout = 86400

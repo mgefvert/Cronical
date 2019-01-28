@@ -1,37 +1,71 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using Cronical.Configuration;
 using Cronical.Jobs;
 using Cronical.Misc;
 using DotNetCommons.Logging;
 
-namespace Cronical.Configuration
+namespace Cronical.Integrations
 {
-    public class ConfigReader
+    public class FileConfigReader : IIntegration
     {
+        private FileInfo _configFile;
+        private DateTime _configTime;
+
         private class Command
         {
             public string Name;
             public string Value;
         }
 
-        public static Config Load(FileInfo file)
+        public FileConfigReader(string configFile)
         {
-            using (var fs = new FileStream(file.FullName, FileMode.Open, FileAccess.Read))
+            _configFile = new FileInfo(configFile);
+        }
+
+        public bool Initialize(GlobalSettings settings, LogChannel logger)
+        {
+            return true;
+        }
+
+        public (JobLoadResult, List<Job>) FetchJobs(JobSettings defaultSettings)
+        {
+            if (!HasConfigChanged())
+                return (JobLoadResult.NoChange, null);
+
+            var config = LoadConfig();
+            return (JobLoadResult.ReplaceJobs, config.Jobs);
+        }
+
+        public void Completed(Job job)
+        {
+        }
+
+        public void Shutdown()
+        {
+        }
+
+        private bool HasConfigChanged()
+        {
+            _configFile.Refresh();
+            return _configFile.LastWriteTime > _configTime;
+        }
+
+        public Config LoadConfig()
+        {
+            _configTime = _configFile.LastWriteTime;
+            using (var fs = new FileStream(_configFile.FullName, FileMode.Open, FileAccess.Read))
             {
-                return Load(fs, file.DirectoryName);
+                return LoadConfig(fs, _configFile.DirectoryName);
             }
         }
 
-        public static Config Load(Stream stream, string homedir)
+        internal static Config LoadConfig(Stream stream, string homedir)
         {
-            var jobsettings = new JobSettings
-            {
-                Home = homedir
-            };
-
             var result = new Config();
             using (var reader = new StreamReader(stream))
             {

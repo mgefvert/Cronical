@@ -51,11 +51,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Configuration\ConfigReader.cs" />
-    <Compile Include="Configuration\Config.cs" />
+    <Compile Include="Integrations\FileConfigReader.cs" />
     <Compile Include="Configuration\GlobalSettings.cs" />
     <Compile Include="Configuration\AbstractSettings.cs" />
     <Compile Include="InjectCtrlC.cs" />
+    <Compile Include="Integrations\JobLoadResult.cs" />
+    <Compile Include="Integrations\IIntegration.cs" />
+    <Compile Include="Jobs\SingleJob.cs" />
     <Compile Include="Jobs\JobState.cs" />
     <Compile Include="Jobs\Job.cs" />
     <Compile Include="Misc\ProcessParameters.cs" />

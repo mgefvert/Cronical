@@ -48,7 +48,7 @@ namespace Cronical
                 Logger.Configuration.Severity = _opts.DebugLogs ? LogSeverity.Debug : LogSeverity.Normal;
                 Logger.Notice("Cronical booting up");
 
-                var service = new Service { Filename = _opts.ConfigFile };
+                var service = new Service(_opts.ConfigFile );
 
                 if (_opts.InstallService)
                 {

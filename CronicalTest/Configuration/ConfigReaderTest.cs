@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using Cronical.Configuration;
+using Cronical.Integrations;
 using Cronical.Misc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -13,32 +14,32 @@ namespace Cronical.Test.Configuration
         [TestMethod]
         public void TestStripComments()
         {
-            Assert.IsNull(ConfigReader.PreprocessLine(null));
-            Assert.IsNull(ConfigReader.PreprocessLine(""));
-            Assert.IsNull(ConfigReader.PreprocessLine("       "));
-            Assert.IsNull(ConfigReader.PreprocessLine("   # This is some whitespace"));
+            Assert.IsNull(FileConfigReader.PreprocessLine(null));
+            Assert.IsNull(FileConfigReader.PreprocessLine(""));
+            Assert.IsNull(FileConfigReader.PreprocessLine("       "));
+            Assert.IsNull(FileConfigReader.PreprocessLine("   # This is some whitespace"));
         }
 
         [TestMethod]
         public void TestSpacing()
         {
-            var job = ConfigReader.ParseJob(" * * * * *    xx\t1\t2");
+            var job = FileConfigReader.ParseJob(" * * * * *    xx\t1\t2");
             Assert.AreEqual("xx 1 2", job.Command);
         }
 
         [TestMethod]
         public void TestTrimComment()
         {
-            Assert.AreEqual(null, ConfigReader.PreprocessLine(null));
-            Assert.AreEqual(null, ConfigReader.PreprocessLine(""));
-            Assert.AreEqual(null, ConfigReader.PreprocessLine("   "));
-            Assert.AreEqual("Hello", ConfigReader.PreprocessLine(" Hello "));
-            Assert.AreEqual(null, ConfigReader.PreprocessLine("#"));
-            Assert.AreEqual(null, ConfigReader.PreprocessLine("##"));
-            Assert.AreEqual("Text", ConfigReader.PreprocessLine("Text # Comment"));
-            Assert.AreEqual("Text", ConfigReader.PreprocessLine("Text # Comment # Again"));
-            Assert.AreEqual("Text # More Text", ConfigReader.PreprocessLine("Text \\# More Text # Comment"));
-            Assert.AreEqual("Text", ConfigReader.PreprocessLine("Text # Comment \\"));
+            Assert.AreEqual(null, FileConfigReader.PreprocessLine(null));
+            Assert.AreEqual(null, FileConfigReader.PreprocessLine(""));
+            Assert.AreEqual(null, FileConfigReader.PreprocessLine("   "));
+            Assert.AreEqual("Hello", FileConfigReader.PreprocessLine(" Hello "));
+            Assert.AreEqual(null, FileConfigReader.PreprocessLine("#"));
+            Assert.AreEqual(null, FileConfigReader.PreprocessLine("##"));
+            Assert.AreEqual("Text", FileConfigReader.PreprocessLine("Text # Comment"));
+            Assert.AreEqual("Text", FileConfigReader.PreprocessLine("Text # Comment # Again"));
+            Assert.AreEqual("Text # More Text", FileConfigReader.PreprocessLine("Text \\# More Text # Comment"));
+            Assert.AreEqual("Text", FileConfigReader.PreprocessLine("Text # Comment \\"));
         }
 
         [TestMethod]
@@ -47,7 +48,7 @@ namespace Cronical.Test.Configuration
             var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Cronical.Test.TestData.cronical.dat");
             Assert.IsNotNull(stream);
 
-            var config = ConfigReader.Load(stream, "c:\\test");
+            var config = FileConfigReader.LoadConfig(stream, "c:\\test");
             Assert.IsNotNull(config);
 
             Assert.IsTrue(config.Settings.RunMissedJobs);
