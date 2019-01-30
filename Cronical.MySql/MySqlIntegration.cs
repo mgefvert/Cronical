@@ -44,12 +44,12 @@ namespace Cronical.MySql
             }
         }
 
-        public List<SingleJob> FetchJobs(JobSettings defaultSettings)
+        public (JobLoadResult, List<Job>) FetchJobs(JobSettings defaultSettings)
         {
             try
             {
                 if ((DateTime.Now - _lastCheck).TotalSeconds < 60)
-                    return null;
+                    return (JobLoadResult.NoChange, null);
 
                 _lastCheck = DateTime.Now;
 
@@ -59,25 +59,25 @@ namespace Cronical.MySql
                         update jobs set owner={_ownerId} where owner is null and (time is null or time <= now()) limit 10;
                         select * from jobs where owner={_ownerId};
                         delete from jobs where owner={_ownerId};
-                    ");
-
-                    return rows
-                        .Select(row => new SingleJob 
+                    ")
+                        .Select(row => (Job)new SingleJob 
                         {
                             Command = (string) row.command, 
                             Tag = (string) row.tag
                         })
                         .ToList();
+
+                    return rows.Any() ? (JobLoadResult.AddJobs, rows) : (JobLoadResult.NoChange, null);
                 }
             }
             catch (Exception e)
             {
                 _logger.Error("Cronical.MySql: Error while loading jobs: " + e.Message);
-                return null;
+                return (JobLoadResult.NoChange, null);
             }
         }
 
-        public void Completed(SingleJob job)
+        public void Completed(Job job)
         {
         }
 

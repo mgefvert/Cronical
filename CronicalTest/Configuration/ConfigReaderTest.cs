@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using Cronical.Configuration;
 using Cronical.Integrations;
+using Cronical.Jobs;
 using Cronical.Misc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -45,18 +46,20 @@ namespace Cronical.Test.Configuration
         [TestMethod]
         public void TestLoad()
         {
-            var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Cronical.Test.TestData.cronical.dat");
+            var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Cronical.Test.cronical.dat");
             Assert.IsNotNull(stream);
 
-            var config = FileConfigReader.LoadConfig(stream, "c:\\test");
-            Assert.IsNotNull(config);
+            var globalSettings = new GlobalSettings();
+            var jobSettings = new JobSettings { Home = "c:\\test" };
 
-            Assert.IsTrue(config.Settings.RunMissedJobs);
-            Assert.AreEqual(15, config.Settings.ServiceChecks);
+            var jobs = FileConfigReader.LoadConfig(stream, globalSettings, jobSettings).ToList();
 
-            Assert.AreEqual(17, config.Jobs.Count);
+            Assert.IsTrue(globalSettings.RunMissedJobs);
+            Assert.AreEqual(15, globalSettings.ServiceChecks);
+
+            Assert.AreEqual(17, jobs.Count);
             
-            var cronJobs = config.CronJobs.ToArray();
+            var cronJobs = jobs.OfType<CronJob>().ToArray();
             Assert.AreEqual(15, cronJobs.Length);
 
             // @reboot cmd /c echo Hello, world!
@@ -205,7 +208,7 @@ namespace Cronical.Test.Configuration
             Assert.AreEqual(MakeAllBits(12), cronJob.Months.Val());
             Assert.AreEqual(MakeAllBits(7), cronJob.Weekdays.Val());
 
-            var serviceJobs = config.ServiceJobs.ToArray();
+            var serviceJobs = jobs.OfType<ServiceJob>().ToArray();
             Assert.AreEqual(2, serviceJobs.Length);
             Assert.AreEqual("cmd /k echo Start and keep running", serviceJobs[0].Command);
             Assert.AreEqual("cmd /k echo Start again and keep running", serviceJobs[1].Command);

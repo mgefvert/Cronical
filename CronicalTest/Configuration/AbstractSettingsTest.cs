@@ -14,49 +14,49 @@ namespace Cronical.Test.Configuration
     [TestClass]
     public class AbstractSettingsTest
     {
-        private SampleTest x;
+        private SampleTest _x;
 
         [TestInitialize]
         public void Setup()
         {
-            x = new SampleTest();
+            _x = new SampleTest();
         }
 
         [TestMethod]
         public void TestExists()
         {
-            Assert.IsTrue(x.Exists("s"));
-            Assert.IsTrue(x.Exists("n"));
-            Assert.IsTrue(x.Exists("b"));
-            Assert.IsFalse(x.Exists("x"));
-            Assert.IsTrue(x.Exists("S"));
-            Assert.IsTrue(x.Exists("N"));
-            Assert.IsTrue(x.Exists("B"));
-            Assert.IsFalse(x.Exists("X"));
-            Assert.IsFalse(x.Exists(""));
-            Assert.IsFalse(x.Exists(null));
+            Assert.IsTrue(_x.Exists("s"));
+            Assert.IsTrue(_x.Exists("n"));
+            Assert.IsTrue(_x.Exists("b"));
+            Assert.IsFalse(_x.Exists("x"));
+            Assert.IsTrue(_x.Exists("S"));
+            Assert.IsTrue(_x.Exists("N"));
+            Assert.IsTrue(_x.Exists("B"));
+            Assert.IsFalse(_x.Exists("X"));
+            Assert.IsFalse(_x.Exists(""));
+            Assert.IsFalse(_x.Exists(null));
         }
 
         [TestMethod]
         public void TestSet()
         {
-            Assert.IsTrue(x.Set("s", "hello"));
-            Assert.IsTrue(x.Set("n", "42"));
-            Assert.IsTrue(x.Set("b", "true"));
-            Assert.IsFalse(x.Set("x", "bork"));
+            Assert.IsTrue(_x.Set("s", "hello"));
+            Assert.IsTrue(_x.Set("n", "42"));
+            Assert.IsTrue(_x.Set("b", "true"));
+            Assert.IsFalse(_x.Set("x", "bork"));
 
-            Assert.AreEqual("hello", x.S);
-            Assert.AreEqual(42, x.N);
-            Assert.AreEqual(true, x.B);
+            Assert.AreEqual("hello", _x.S);
+            Assert.AreEqual(42, _x.N);
+            Assert.AreEqual(true, _x.B);
         }
 
         [TestMethod]
         public void TestToString()
         {
-            x.S = "hello";
-            x.N = 42;
+            _x.S = "hello";
+            _x.N = 42;
 
-            Assert.AreEqual("hello,42,False", x.ToString());
+            Assert.AreEqual("hello,42,False", _x.ToString());
         }
     }
 }

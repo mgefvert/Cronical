@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Cronical.Configuration;
@@ -18,7 +17,8 @@ namespace Cronical
 
         // Global configuration
         private readonly IIntegration[] _integrations;
-        private readonly GlobalSettings _settings;
+        private readonly GlobalSettings _globalSettings;
+        private readonly JobSettings _defaultSettings;
 
         // Timers and locks
         private DateTime _lastDate;
@@ -31,17 +31,18 @@ namespace Cronical
         internal IEnumerable<CronJob> CronJobs => Jobs.OfType<CronJob>();
         internal IEnumerable<ServiceJob> ServiceJobs => Jobs.OfType<ServiceJob>();
 
-        public CronManager(GlobalSettings settings, IEnumerable<IIntegration> integrations)
+        public CronManager(GlobalSettings globalSettings, JobSettings defaultSettings, IEnumerable<IIntegration> integrations)
         {
             _integrations = integrations.ToArray();
-            _settings = settings;
+            _globalSettings = globalSettings;
+            _defaultSettings = defaultSettings;
 
             DisplaySettingsInfo();
             Logger.Log($"{Jobs.Count} jobs in job list");
 
             RunBootJobs();
 
-            if (_settings.RunMissedJobs)
+            if (_globalSettings.RunMissedJobs)
                 Logger.Catch(delegate
                 {
                     var last = Registry.GetValue(RegKey, "LastRunTime", null) as string;
@@ -57,52 +58,57 @@ namespace Cronical
 
         public void DisplaySettingsInfo()
         {
-            Logger.Log($"Config: Run missed jobs on startup: {_settings.RunMissedJobs}");
-            Logger.Log($"Config: Check services every: {_settings.ServiceChecks} seconds" + (_settings.ServiceChecks == 0 ? " (constantly)" : ""));
+            Logger.Log($"Config: Run missed jobs on startup: {_globalSettings.RunMissedJobs}");
+            Logger.Log($"Config: Check services every: {_globalSettings.ServiceChecks} seconds" + (_globalSettings.ServiceChecks == 0 ? " (constantly)" : ""));
         }
 
         public void Reload()
         {
-
-
-
             foreach (var integration in _integrations)
-            {
-                var jobsettings = new JobSettings
-                {
-                    Home = homedir
-                };
+                ReloadFromIntegration(integration);
+        }
 
-                var result = integration.FetchJobs()
+        public void ReloadFromIntegration(IIntegration integration)
+        {
+            var result = integration.FetchJobs(_defaultSettings);
+
+            switch (result.Item1)
+            {
+                case JobLoadResult.NoChange:
+                    return;
+
+                case JobLoadResult.AddJobs:
+                    Jobs.AddRange(result.Item2);
+                    return;
+
+                case JobLoadResult.ReplaceJobs:
+                    // Continue below
+                    break;
+
+                default:
+                    return;
             }
 
+            var myOldJobs = Jobs.ExtractAll(x => x.Loader == integration);
 
-            var newConfig = FileConfigReader.Load(ConfigFile);
-            ConfigTime = ConfigFile.LastWriteTime;
-
-            Config.Settings = newConfig.Settings;
-            Config.DisplaySettingsInfo();
-            
             // It's important to compare Config.Jobs first, since the "both" result will have items
             // from the first List - and the first list has all the Process identifiers, not newConfig.
-            var result = CollectionExtensions.Intersect(Config.Jobs, newConfig.Jobs,
-              (job1, job2) => string.Compare(job1.GetJobCode(), job2.GetJobCode(), StringComparison.InvariantCulture));
-
-            Config.Jobs.Clear();
+            var comparison = CollectionExtensions.Intersect(myOldJobs, result.Item2,
+                (job1, job2) => string.Compare(job1.GetJobCode(), job2.GetJobCode(), StringComparison.InvariantCulture));
 
             // Add jobs that exist in both new and old
-            Config.Jobs.AddRange(result.Both);
+            Jobs.AddRange(comparison.Both);
 
             // Add new jobs
-            foreach (var job in result.Right)
+            foreach (var job in comparison.Right)
             {
                 Logger.Log("Found new " + job.GetType().Name + ": " + job.Command);
-                Config.Jobs.Add(job);
+                Jobs.Add(job);
             }
 
             // End service jobs no longer existing
-            result.Left.ForEach(job => Logger.Log("Removing old " + job.GetType().Name + ": " + job.Command));
-            TerminateJobs(result.Left.OfType<ServiceJob>());
+            comparison.Left.ForEach(job => Logger.Log("Removing old " + job.GetType().Name + ": " + job.Command));
+            TerminateJobs(comparison.Left.OfType<ServiceJob>());
         }
 
         public void RunBootJobs()
@@ -160,13 +166,17 @@ namespace Cronical
                         job.Run();
 
                     // Check on service jobs
-                    if ((now - _lastService).TotalSeconds > _settings.ServiceChecks)
+                    if ((now - _lastService).TotalSeconds > _globalSettings.ServiceChecks)
                     {
                         Logger.Debug("Checking services");
                         _lastService = now;
                         foreach (var job in ServiceJobs.Where(job => !job.CheckIsRunning()))
                             job.Run();
                     }
+
+                    // Run single jobs
+                    foreach (var job in Jobs.ExtractAll(x => x is SingleJob).Cast<SingleJob>())
+                        job.Run();
 
                     SaveDateTime();
 

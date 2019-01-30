@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using Cronical.Configuration;
@@ -13,8 +14,9 @@ namespace Cronical.Integrations
 {
     public class FileConfigReader : IIntegration
     {
-        private FileInfo _configFile;
+        private readonly FileInfo _configFile;
         private DateTime _configTime;
+        private GlobalSettings _globalSettings;
 
         private class Command
         {
@@ -27,8 +29,9 @@ namespace Cronical.Integrations
             _configFile = new FileInfo(configFile);
         }
 
-        public bool Initialize(GlobalSettings settings, LogChannel logger)
+        public bool Initialize(GlobalSettings globalSettings, LogChannel logger)
         {
+            _globalSettings = globalSettings;
             return true;
         }
 
@@ -37,8 +40,11 @@ namespace Cronical.Integrations
             if (!HasConfigChanged())
                 return (JobLoadResult.NoChange, null);
 
-            var config = LoadConfig();
-            return (JobLoadResult.ReplaceJobs, config.Jobs);
+            _configTime = _configFile.LastWriteTime;
+            using (var fs = new FileStream(_configFile.FullName, FileMode.Open, FileAccess.Read))
+            {
+                return (JobLoadResult.ReplaceJobs, LoadConfig(fs, _globalSettings, defaultSettings.Clone()).ToList());
+            }
         }
 
         public void Completed(Job job)
@@ -55,18 +61,8 @@ namespace Cronical.Integrations
             return _configFile.LastWriteTime > _configTime;
         }
 
-        public Config LoadConfig()
+        internal static IEnumerable<Job> LoadConfig(Stream stream, GlobalSettings globalSettings, JobSettings jobSettings)
         {
-            _configTime = _configFile.LastWriteTime;
-            using (var fs = new FileStream(_configFile.FullName, FileMode.Open, FileAccess.Read))
-            {
-                return LoadConfig(fs, _configFile.DirectoryName);
-            }
-        }
-
-        internal static Config LoadConfig(Stream stream, string homedir)
-        {
-            var result = new Config();
             using (var reader = new StreamReader(stream))
             {
                 var c = 0;
@@ -80,27 +76,25 @@ namespace Cronical.Integrations
                     var cmd = TryParseCommand(line);
                     if (cmd != null)
                     {
-                        if (result.Settings.Set(cmd.Name, cmd.Value))
+                        if (globalSettings.Set(cmd.Name, cmd.Value))
                             continue;
 
-                        if (jobsettings.Set(cmd.Name, cmd.Value))
+                        if (jobSettings.Set(cmd.Name, cmd.Value))
                             continue;
                     }
 
-                    var job = TryParseJob(line, jobsettings);
+                    var job = TryParseJob(line, jobSettings);
                     if (job != null)
                     {
                         job.RecalcNextExecTime();
                         job.VerifyExecutableExists();
-                        result.Jobs.Add(job);
+                        yield return job;
                         continue;
                     }
 
                     Logger.Error($"Invalid configuration directive on line {c}: {line}");
                 }
             }
-
-            return result;
         }
 
         internal static string PreprocessLine(string line)

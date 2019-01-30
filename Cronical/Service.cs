@@ -21,14 +21,15 @@ namespace Cronical
         private FileConfigReader _fileConfigReader;
 
         private readonly List<IIntegration> _integrations = new List<IIntegration>();
-        private readonly GlobalSettings _globalSettings = new GlobalSettings();
-        private readonly JobSettings _defaultSettings = new JobSettings();
+        private readonly GlobalSettings _globalSettings;
+        private readonly JobSettings _defaultSettings;
         private readonly string _configFilename;
 
         public Service(string configFilename)
         {
             InitializeComponent();
             _configFilename = configFilename;
+            (_globalSettings, _defaultSettings) = LoadDefaultSettings();
         }
 
         public void Initialize()
@@ -41,27 +42,57 @@ namespace Cronical
             _integrations.Add(_fileConfigReader);
 
             foreach (var integration in ConfigurationManager.AppSettings["Integrations"].Split(',').TrimAndFilter())
-                _integrations.AddIfNotNull(LoadIntegration(integration));
+                _integrations.AddRangeIfNotNull(LoadIntegration(integration));
 
             _manager = new CronManager(_globalSettings, _defaultSettings, _integrations);
             _timer = new Timer(x => _manager.Tick(), null, 1000, 1000);
         }
 
-        private IIntegration LoadIntegration(string integrationName)
+        public static (GlobalSettings, JobSettings) LoadDefaultSettings()
         {
-            try
+            var globalSettings = new GlobalSettings
             {
-                var assembly = Assembly.Load(integrationName + ".dll");
-                foreach (var type in assembly.GetTypes().Where(t => t.IsInstanceOfType(typeof(IIntegration))))
+                RunMissedJobs = ConfigurationManager.AppSettings["RunMissedJobs"].ParseBoolean(),
+                ServiceChecks = ConfigurationManager.AppSettings["ServiceChecks"].ParseInt()
+            };
+
+            var defaultSettings = new JobSettings
+            {
+                Home       = Path.GetFullPath(ConfigurationManager.AppSettings["Home"] ?? "."),
+                MailStdOut = ConfigurationManager.AppSettings["MailStdOut"].ParseBoolean(),
+                MailCc     = ConfigurationManager.AppSettings["MailCc"],
+                MailBcc    = ConfigurationManager.AppSettings["MailBcc"],
+                MailFrom   = ConfigurationManager.AppSettings["MailFrom"],
+                MailTo     = ConfigurationManager.AppSettings["MailTo"],
+                SmtpHost   = ConfigurationManager.AppSettings["SmtpHost"],
+                SmtpPass   = ConfigurationManager.AppSettings["SmtpPass"],
+                SmtpSSL    = ConfigurationManager.AppSettings["SmtpSSL"].ParseBoolean(),
+                SmtpUser   = ConfigurationManager.AppSettings["SmtpUser"],
+                Timeout    = ConfigurationManager.AppSettings["Timeout"].ParseInt(86400)
+            };
+            defaultSettings.Lock();
+
+            return (globalSettings, defaultSettings);
+        }
+
+
+        private IEnumerable<IIntegration> LoadIntegration(string integrationName)
+        {
+            var assembly = Assembly.Load(integrationName + ".dll");
+            foreach (var type in assembly.GetTypes().Where(t => t.IsInstanceOfType(typeof(IIntegration))))
+            {
+                IIntegration integration = null;
+                try
                 {
-                    var integration = (IIntegration)Activator.CreateInstance(type);
-                    if (integration.Initialize())
+                    integration = (IIntegration)Activator.CreateInstance(type);
                 }
-            }
-            catch (Exception e)
-            {
-                Logger.Error($"Exception {e.GetType().Name} while loading integration '{integrationName}': {e.Message}");
-                return null;
+                catch (Exception e)
+                {
+                    Logger.Error($"Exception {e.GetType().Name} while loading integration '{integrationName}': {e.Message}");
+                }
+
+                if (integration != null && integration.Initialize(_globalSettings, Logger.LogChannel))
+                    yield return integration;
             }
         }
 

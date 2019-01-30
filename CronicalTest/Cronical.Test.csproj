@@ -85,7 +85,7 @@
     <None Include="test.dat">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <EmbeddedResource Include="TestData\cronical.dat" />
+    <EmbeddedResource Include="cronical.dat" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
