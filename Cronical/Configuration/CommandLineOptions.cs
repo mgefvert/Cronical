@@ -6,6 +6,9 @@ using DotNetCommons.Sys;
 
 namespace Cronical.Configuration
 {
+    /// <summary>
+    /// Handles configuration given on the command line.
+    /// </summary>
     public class CommandLineOptions
     {
         private string _configFile;

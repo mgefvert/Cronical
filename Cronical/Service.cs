@@ -14,6 +14,11 @@ using DotNetCommons.Text;
 
 namespace Cronical
 {
+    /// <summary>
+    /// The Service class is the fundamental crontroller of Cronical, responsible
+    /// for instantiating and maintaining all the different components required.
+    /// It can be run either as a service, or standalone as a console.
+    /// </summary>
     public partial class Service : ServiceBase
     {
         private Timer _timer;
@@ -32,30 +37,44 @@ namespace Cronical
             (_globalSettings, _defaultSettings) = LoadDefaultSettings();
         }
 
+        /// <summary>
+        /// Initialize the service and configure it; along with loading all the integrations
+        /// specified in the app.config file.
+        /// </summary>
         public void Initialize()
         {
             Logger.Notice("Process startup");
             Logger.Log($"Using definition file {_configFilename}");
 
+            // One FileConfigReader is always required
             _fileConfigReader = new FileConfigReader(_configFilename);
             _fileConfigReader.Initialize(_globalSettings, Logger.LogChannel);
             _integrations.Add(_fileConfigReader);
 
+            // Create additional integrations
             foreach (var integration in ConfigurationManager.AppSettings["Integrations"].Split(',').TrimAndFilter())
                 _integrations.AddRangeIfNotNull(LoadIntegration(integration));
 
+            // Start cron manager and start ticking
             _manager = new CronManager(_globalSettings, _defaultSettings, _integrations);
             _timer = new Timer(x => _manager.Tick(), null, 1000, 1000);
         }
 
+        /// <summary>
+        /// Load default settings from the app.config file.
+        /// </summary>
+        /// <returns></returns>
         public static (GlobalSettings, JobSettings) LoadDefaultSettings()
         {
+            // Global settings are global for entire service.
             var globalSettings = new GlobalSettings
             {
                 RunMissedJobs = ConfigurationManager.AppSettings["RunMissedJobs"].ParseBoolean(),
                 ServiceChecks = ConfigurationManager.AppSettings["ServiceChecks"].ParseInt()
             };
 
+            // Default job settings are given in the app.config file and can be overriden by
+            // integrations.
             var defaultSettings = new JobSettings
             {
                 Home       = Path.GetFullPath(ConfigurationManager.AppSettings["Home"] ?? "."),
@@ -75,7 +94,11 @@ namespace Cronical
             return (globalSettings, defaultSettings);
         }
 
-
+        /// <summary>
+        /// Load an integration and initialize it.
+        /// </summary>
+        /// <param name="integrationName">Integration name without the .DLL part.</param>
+        /// <returns></returns>
         private IEnumerable<IIntegration> LoadIntegration(string integrationName)
         {
             var assembly = Assembly.Load(integrationName + ".dll");
@@ -96,17 +119,27 @@ namespace Cronical
             }
         }
 
+        /// <summary>
+        /// Service start command (for Windows services)
+        /// </summary>
+        /// <param name="args"></param>
         protected override void OnStart(string[] args)
         {
             Console.CancelKeyPress += (sender, breakArgs) => breakArgs.Cancel = true;
             Initialize();
         }
 
+        /// <summary>
+        /// Service stop command (for Windows services)
+        /// </summary>
         protected override void OnStop()
         {
             Shutdown();
         }
 
+        /// <summary>
+        /// Shut down the service and terminate.
+        /// </summary>
         public void Shutdown()
         {
             Logger.Notice("Shutting down");

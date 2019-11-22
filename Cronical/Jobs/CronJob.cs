@@ -6,18 +6,28 @@ using DotNetCommons.Logging;
 
 namespace Cronical.Jobs
 {
+    /// <summary>
+    /// Class that handles a cron job that is to be run at regular intervals.
+    /// </summary>
     public class CronJob : SingleJob
     {
         protected static readonly DateTime Never = new DateTime(9999, 1, 1);
 
+        // Bit field arrays describing when the job is to be run.
         public BitArray Weekdays = new BitArray(7);
         public BitArray Months = new BitArray(12);
         public BitArray Days = new BitArray(31);
         public BitArray Hours = new BitArray(24);
         public BitArray Minutes = new BitArray(60);
         public bool Reboot;
+
+        // Calculated next execution time.
         public DateTime NextExecTime;
 
+        /// <summary>
+        /// Job signature that is used to determine equality between jobs.
+        /// </summary>
+        /// <returns></returns>
         public override string GetJobCode()
         {
             var values = new[] { Weekdays, Months, Days, Hours, Minutes }.Select(x => x.Val().ToString());
@@ -30,6 +40,12 @@ namespace Cronical.Jobs
             RecalcNextExecTime(DateTime.Now);
         }
 
+        /// <summary>
+        /// Recalculate the next start time. Simply iterate through every given minute up to
+        /// one year out and check for hits. Yields a maximum of 525600 tests, which is not
+        /// difficult for a modern computer.
+        /// </summary>
+        /// <param name="origin"></param>
         public void RecalcNextExecTime(DateTime origin)
         {
             if (Reboot)

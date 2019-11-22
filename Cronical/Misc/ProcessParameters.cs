@@ -5,6 +5,10 @@ using System.Text;
 
 namespace Cronical.Misc
 {
+    /// <summary>
+    /// Class that abstracts certain parameters for a process, such as the executable, command-line arguments,
+    /// locating the executable on disk etc.
+    /// </summary>
     public class ProcessParameters
     {
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]

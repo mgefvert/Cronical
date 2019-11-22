@@ -12,6 +12,10 @@ using DotNetCommons.Security;
 
 namespace Cronical.MySql
 {
+    /// <summary>
+    /// Integration for loading jobs from a MySQL database. Depends on a database schema
+    /// in the accompanying file.
+    /// </summary>
     public class MySqlIntegration : IIntegration
     {
         private string _connectionString;
@@ -19,10 +23,16 @@ namespace Cronical.MySql
         private DateTime _lastCheck;
         private ulong _ownerId;
 
+        /// <summary>
+        /// Initialize the integration.
+        /// </summary>
+        /// <param name="settings"></param>
+        /// <param name="logger"></param>
+        /// <returns></returns>
         public bool Initialize(GlobalSettings settings, LogChannel logger)
         {
             _logger = logger;
-            _ownerId = (Crc32.ComputeChecksum(Encoding.Default.GetBytes(Environment.MachineName)) << 32) | (uint)Process.GetCurrentProcess().Id;
+            _ownerId = ((ulong)Crc32.ComputeChecksum(Encoding.Default.GetBytes(Environment.MachineName)) << 32) | (uint)Process.GetCurrentProcess().Id;
 
             try
             {
@@ -44,6 +54,13 @@ namespace Cronical.MySql
             }
         }
 
+        /// <summary>
+        /// Reload the job list. Only checks the tables every 60 seconds; the rest of the time it returns
+        /// NoChange. Uses a single job queue defined in the "jobs" table - can only handle SingleJob objects
+        /// for now, no provision exists for actual cron jobs run regularly or service jobs.
+        /// </summary>
+        /// <param name="defaultSettings"></param>
+        /// <returns></returns>
         public (JobLoadResult, List<Job>) FetchJobs(JobSettings defaultSettings)
         {
             try
@@ -53,7 +70,7 @@ namespace Cronical.MySql
 
                 _lastCheck = DateTime.Now;
 
-                using (var db = Helper.GetConnection("local"))
+                using (var db = Helper.GetConnection(_connectionString))
                 {
                     var rows = db.Query($@"
                         update jobs set owner={_ownerId} where owner is null and (time is null or time <= now()) limit 10;
@@ -79,6 +96,7 @@ namespace Cronical.MySql
 
         public void Completed(Job job)
         {
+            // TODO
         }
 
         public void Shutdown()

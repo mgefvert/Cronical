@@ -1,14 +1,14 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C88F66EE-0A05-42AA-977B-8D3745888321}</ProjectGuid>
+    <ProjectGuid>158efdee-aa4a-465f-b095-ca76fa3c73e7</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Cronical.MySql</RootNamespace>
-    <AssemblyName>Cronical.MySql</AssemblyName>
+    <RootNamespace>Cronical.Integrations</RootNamespace>
+    <AssemblyName>Cronical.Integrations</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -31,44 +31,24 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
+    <Reference Include="System"/>
+    
+    <Reference Include="System.Core"/>
+    <Reference Include="System.Xml.Linq"/>
+    <Reference Include="System.Data.DataSetExtensions"/>
+    
+    
+    <Reference Include="Microsoft.CSharp"/>
+    
+    <Reference Include="System.Data"/>
+    
+    <Reference Include="System.Net.Http"/>
+    
+    <Reference Include="System.Xml"/>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Helper.cs" />
-    <Compile Include="MySqlIntegration.cs" />
+    <Compile Include="Class1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="MySql.Data">
-      <Version>6.10.8</Version>
-    </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Cronical\Cronical.csproj">
-      <Project>{85d964b2-cff6-4ee7-ab09-db0e74cc9923}</Project>
-      <Name>Cronical</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DotNetCommons\src\DotNetCommons\DotNetCommons.csproj">
-      <Project>{41ED4443-0D88-4BF4-8E60-2292CD85D32D}</Project>
-      <Name>DotNetCommons</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="schema.sql" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>copy Cronical.MySql.dll ..\..\..\Cronical\bin\Debug
-copy Cronical.MySql.pdb ..\..\..\Cronical\bin\Debug
-copy MySql.Data.dll ..\..\..\Cronical\bin\Debug
-
-</PostBuildEvent>
-  </PropertyGroup>
-</Project>
+ </Project>

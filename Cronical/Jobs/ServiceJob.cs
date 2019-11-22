@@ -4,6 +4,11 @@ using DotNetCommons.Logging;
 
 namespace Cronical.Jobs
 {
+    /// <summary>
+    /// Job class that handles and monitors services; starting them, watching over
+    /// them to make sure they're still running, terminating and restarting them
+    /// as needed.
+    /// </summary>
     public class ServiceJob : Job
     {
         protected ProcessWrapper Process;

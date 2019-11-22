@@ -4,6 +4,10 @@ using System.Reflection;
 
 namespace Cronical.Configuration
 {
+    /// <summary>
+    /// Settings for a particular job. Can be locked to prevent further changes (as in the
+    /// default job configuration loaded from registry) and copied to other jobs.
+    /// </summary>
     public class JobSettings : AbstractSettings
     {
         private bool _locked;

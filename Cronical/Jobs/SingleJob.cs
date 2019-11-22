@@ -5,6 +5,10 @@ using DotNetCommons.Logging;
 
 namespace Cronical.Jobs
 {
+    /// <summary>
+    /// Job class that handles a single job execution; once the job is run it is typically
+    /// discarded. Useful for implementing a job queue.
+    /// </summary>
     public class SingleJob : Job
     {
         public override void RecalcNextExecTime()

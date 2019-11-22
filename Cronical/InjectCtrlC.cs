@@ -8,6 +8,10 @@ using DotNetCommons.Security;
 
 namespace Cronical
 {
+    /// <summary>
+    /// Class that kills another program by attaching to a different console group
+    /// and firing CTRL-C events.
+    /// </summary>
     internal class InjectCtrlC
     {
         [DllImport("kernel32.dll", SetLastError = true)]
@@ -17,6 +21,10 @@ namespace Cronical
         [DllImport("kernel32.dll")]
         private static extern bool GenerateConsoleCtrlEvent(uint dwCtrlEvent, uint dwProcessGroupId);
 
+        /// <summary>
+        /// Launch a new process that hunts down a process ID and kills it.
+        /// </summary>
+        /// <param name="processId"></param>
         internal static void Break(int processId)
         {
             var cmd = Environment.GetCommandLineArgs().First().Replace("vshost.", "");
@@ -33,6 +41,10 @@ namespace Cronical
                 Logger.Warning("CtrlC: Unable to start kill process: " + cmd);
         }
 
+        /// <summary>
+        /// Take arguments given on the command line, and hunt down a given program and kill it.
+        /// </summary>
+        /// <param name="args"></param>
         internal static void Handle(string[] args)
         {
             var pid = int.Parse(args.ElementAt(1));

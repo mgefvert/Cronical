@@ -16,7 +16,11 @@ namespace Cronical
         private static CommandLineOptions _opts;
         public static IMailSender MailSender = new MailSender();
 
-        static int Main(string[] args)
+        /// <summary>
+        /// Main program entry point; for when we're starting the program from the command line.
+        /// Processes arguments, options, installs and removes the service.
+        /// </summary>
+        private static int Main(string[] args)
         {
             try
             {

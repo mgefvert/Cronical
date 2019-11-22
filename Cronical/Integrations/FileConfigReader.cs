@@ -12,6 +12,10 @@ using DotNetCommons.Logging;
 
 namespace Cronical.Integrations
 {
+    /// <summary>
+    /// Default file configuration reader. Reads configuration from a "cronical.dat" file,
+    /// typically, and parses the text-based configuration format.
+    /// </summary>
     public class FileConfigReader : IIntegration
     {
         private readonly FileInfo _configFile;
@@ -35,6 +39,11 @@ namespace Cronical.Integrations
             return true;
         }
 
+        /// <summary>
+        /// Reload the configuration if the file date has changed.
+        /// </summary>
+        /// <param name="defaultSettings"></param>
+        /// <returns></returns>
         public (JobLoadResult, List<Job>) FetchJobs(JobSettings defaultSettings)
         {
             if (!HasConfigChanged())
@@ -55,6 +64,10 @@ namespace Cronical.Integrations
         {
         }
 
+        /// <summary>
+        /// Determines if the timestamp of the cronical.dat file has changed.
+        /// </summary>
+        /// <returns></returns>
         private bool HasConfigChanged()
         {
             _configFile.Refresh();

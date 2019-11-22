@@ -9,6 +9,10 @@ using DotNetCommons.Text;
 
 namespace Cronical.Misc
 {
+    /// <summary>
+    /// Class that very snugly wraps itself around a process and starts it, stops it, and buffers
+    /// output from it.
+    /// </summary>
     public class ProcessWrapper
     {
         private const int WmQuit = 0x0012;

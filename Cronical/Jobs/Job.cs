@@ -7,6 +7,10 @@ using DotNetCommons.Logging;
 
 namespace Cronical.Jobs
 {
+    /// <summary>
+    /// Abstract base class for all jobs. Maintains which integration loaded the job,
+    /// settings, etc.
+    /// </summary>
     public abstract class Job
     {
         public IIntegration Loader { get; set; }

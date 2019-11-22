@@ -8,6 +8,9 @@ using System.Threading;
 
 namespace Cronical.Misc
 {
+    /// <summary>
+    /// Win32 service API.
+    /// </summary>
     public static class ServiceHelper
     {
         private const int STANDARD_RIGHTS_REQUIRED = 0xF0000;

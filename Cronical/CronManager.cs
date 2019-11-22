@@ -11,6 +11,10 @@ using Microsoft.Win32;
 
 namespace Cronical
 {
+    /// <summary>
+    /// CronManager manages the internal logic of the cron system. Maintains lists of jobs to be run,
+    /// active services, handles updating configuration and starts and monitors processes.
+    /// </summary>
     public class CronManager
     {
         public const string RegKey = @"HKEY_CURRENT_USER\Software\Ciceronen\Cronical";
@@ -31,8 +35,15 @@ namespace Cronical
         internal IEnumerable<CronJob> CronJobs => Jobs.OfType<CronJob>();
         internal IEnumerable<ServiceJob> ServiceJobs => Jobs.OfType<ServiceJob>();
 
+        /// <summary>
+        /// Start the cron manager using a given configuration and applicable integrations.
+        /// </summary>
+        /// <param name="globalSettings">Global settings to use.</param>
+        /// <param name="defaultSettings">Default job settings to use.</param>
+        /// <param name="integrations">Loaded integrations.</param>
         public CronManager(GlobalSettings globalSettings, JobSettings defaultSettings, IEnumerable<IIntegration> integrations)
         {
+            // Save configuration.
             _integrations = integrations.ToArray();
             _globalSettings = globalSettings;
             _defaultSettings = defaultSettings;
@@ -40,8 +51,11 @@ namespace Cronical
             DisplaySettingsInfo();
             Logger.Log($"{Jobs.Count} jobs in job list");
 
+            // Run any jobs scheduled at boot.
             RunBootJobs();
 
+            // If configuration says to run missed jobs since last the service was
+            // running, check those here.
             if (_globalSettings.RunMissedJobs)
                 Logger.Catch(delegate
                 {
@@ -56,18 +70,34 @@ namespace Cronical
                 });
         }
 
+        /// <summary>
+        /// Dump global configuration information to screen.
+        /// </summary>
         public void DisplaySettingsInfo()
         {
             Logger.Log($"Config: Run missed jobs on startup: {_globalSettings.RunMissedJobs}");
             Logger.Log($"Config: Check services every: {_globalSettings.ServiceChecks} seconds" + (_globalSettings.ServiceChecks == 0 ? " (constantly)" : ""));
         }
 
+        /// <summary>
+        /// Reload all jobs from all integrations (including the default file integration). Run fairly often,
+        /// typically once per second; it is up to the various integrations to limit checking as needed
+        /// to not overload the system (databases or similar).
+        /// </summary>
         public void Reload()
         {
             foreach (var integration in _integrations)
                 ReloadFromIntegration(integration);
         }
 
+        /// <summary>
+        /// Reload jobs from a given integration. The integration may specify a number of different
+        /// actions; NoChange which means no change, AddJobs means it found additional jobs to add
+        /// to the configuration, and Replace means to simply swap out the existing list for a new one.
+        /// The integration may respond with different results at different times depending on the
+        /// situation.
+        /// </summary>
+        /// <param name="integration">Integration to query.</param>
         public void ReloadFromIntegration(IIntegration integration)
         {
             var result = integration.FetchJobs(_defaultSettings);
@@ -88,6 +118,9 @@ namespace Cronical
                 default:
                     return;
             }
+
+            // Replace jobs ... figure out which existing jobs belong to this integration and calculate
+            // which ones to replace and which ones to keep.
 
             var myOldJobs = Jobs.ExtractAll(x => x.Loader == integration);
 
@@ -111,6 +144,9 @@ namespace Cronical
             TerminateJobs(comparison.Left.OfType<ServiceJob>());
         }
 
+        /// <summary>
+        /// Run all jobs marked as @reboot.
+        /// </summary>
         public void RunBootJobs()
         {
             Logger.Debug("Starting boot jobs");
@@ -118,17 +154,28 @@ namespace Cronical
                 job.Run();
         }
 
+        /// <summary>
+        /// Save the last run time to registry.
+        /// </summary>
         private void SaveDateTime()
         {
             Logger.Catch(() => Registry.SetValue(RegKey, "LastRunTime", DateTime.Now.ToString("s")));
         }
 
+        /// <summary>
+        /// Shut down the cron manager.
+        /// </summary>
         public void Terminate()
         {
             TerminateJobs(ServiceJobs);
             SaveDateTime();
         }
 
+        /// <summary>
+        /// Terminate a list of services; will operate in parallel to make things
+        /// quicker.
+        /// </summary>
+        /// <param name="services"></param>
         public static void TerminateJobs(IEnumerable<ServiceJob> services)
         {
             var options = new ParallelOptions { MaxDegreeOfParallelism = 10 };
@@ -145,6 +192,11 @@ namespace Cronical
             });
         }
 
+        /// <summary>
+        /// The Tick() method performs all the logic to monitor processes, see if new
+        /// ones should be started, and perform minor housekeeping. Typically run once
+        /// per second.
+        /// </summary>
         public void Tick()
         {
             if (_inTick)
@@ -158,6 +210,7 @@ namespace Cronical
                 _inTick = true;
                 try
                 {
+                    // Check for new jobs
                     Reload();
 
                     // Find any jobs that we've passed the Next Exec Time and run them.
@@ -165,7 +218,7 @@ namespace Cronical
                     foreach (var job in CronJobs.Where(job => job.NextExecTime <= now))
                         job.Run();
 
-                    // Check on service jobs
+                    // Check on service jobs and verify that they're running
                     if ((now - _lastService).TotalSeconds > _globalSettings.ServiceChecks)
                     {
                         Logger.Debug("Checking services");
@@ -174,12 +227,13 @@ namespace Cronical
                             job.Run();
                     }
 
-                    // Run single jobs
+                    // Run single jobs and discard them
                     foreach (var job in Jobs.ExtractAll(x => x is SingleJob).Cast<SingleJob>())
                         job.Run();
 
                     SaveDateTime();
 
+                    // Did we roll over to a new day?
                     if (_lastDate < DateTime.Today)
                     {
                         _lastDate = DateTime.Today;

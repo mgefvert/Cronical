@@ -5,6 +5,9 @@ using DotNetCommons.Logging;
 
 namespace Cronical.Configuration
 {
+    /// <summary>
+    /// Base class for manipulating properties of an object through text-based Get and Set methods.
+    /// </summary>
     public abstract class AbstractSettings
     {
         public bool Exists(string setting)
