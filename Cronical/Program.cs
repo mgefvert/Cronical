@@ -44,7 +44,9 @@ namespace Cronical
                 if (!File.Exists(_opts.ConfigFile))
                     throw new FileNotFoundException("Can't find cron data file " + _opts.ConfigFile);
 
-                Logger.Configuration.Severity = _opts.DebugLogs ? LogSeverity.Debug : LogSeverity.Normal;
+                if (_opts.DebugLogs)
+                    Logger.Configuration.Severity = LogSeverity.Debug;
+
                 Logger.Notice("Cronical booting up");
 
                 var service = new Service { Filename = _opts.ConfigFile };
