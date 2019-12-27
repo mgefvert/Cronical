@@ -19,7 +19,7 @@ Cronical runs best as a service - it's a fire-and-forget kind of program that re
 
 To deploy Cronical, make sure you have .NET 4.7.2 installed (okay, so there's one dependency, fine) and then copy Cronical.exe and Cronical.exe.config to wherever you need it. Then adapt the example cronical.dat file to what jobs you need to run.
 
-Start
+Start Cronical from an elevated console:
 
     cronical.exe --install
 
