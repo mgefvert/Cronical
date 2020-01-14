@@ -48,7 +48,7 @@ Please note that each job has its own configuration; any directive such as Home=
 
 Any change to the cronical.dat file will be automatically and quickly detected by Cronical and it will reload and reparse the file.
 
-Text starting with # is used for comments and may occur anywhere in the file. To use # in an actual command, escape it with a backslash, e.g. "\#".
+Text starting with # is used for comments and may occur anywhere in the file. To use # in an actual command, escape it with a backslash (`\#`).
 
 ## Running services
 
