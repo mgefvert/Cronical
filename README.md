@@ -1,5 +1,7 @@
 # Cronical
 
+*At this point there is no current active development of this project. However, it remains widely used and pull requests are certaintly welcome.*
+
 * Current (stable) release version: 1.3
 * Master branch version: 1.3
 
