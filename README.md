@@ -23,7 +23,7 @@ To deploy Cronical, make sure you have .NET 4.7.2 installed (okay, so there's on
 
 Start Cronical from an elevated console:
 
-    cronical.exe --install
+    Cronical.exe --install
 
 to install the service, and then start it up using Windows Services, or simply
 
@@ -31,8 +31,8 @@ to install the service, and then start it up using Windows Services, or simply
 
 You may optionally specify an alternative service name and title, which enables you to install several instances of Cronical on the same system. The -c parameter can be used to specify a particular configuration file to use for that service instance.
 
-    cronical.exe --install --service-name Cronical1 --service-title "Cronical 1" -c d:\cron1.dat
-    cronical.exe --install --service-name Cronical2 --service-title "Cronical 2" -c d:\cron2.dat
+    Cronical.exe --install --service-name Cronical1 --service-title "Cronical 1" -c d:\cron1.dat
+    Cronical.exe --install --service-name Cronical2 --service-title "Cronical 2" -c d:\cron2.dat
     net start cronical1
     net start cronical2
 
