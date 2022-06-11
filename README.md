@@ -1,5 +1,7 @@
 # Cronical
 
+*At this point there is no current active development of this project. However, it remains widely used and pull requests are certainly welcome.*
+
 * Current (stable) release version: 1.3
 * Master branch version: 1.3
 
@@ -19,7 +21,7 @@ Cronical runs best as a service - it's a fire-and-forget kind of program that re
 
 To deploy Cronical, make sure you have .NET 4.7.2 installed (okay, so there's one dependency, fine) and then copy Cronical.exe and Cronical.exe.config to wherever you need it. Then adapt the example cronical.dat file to what jobs you need to run.
 
-Start
+Start Cronical from an elevated console:
 
     cronical.exe --install
 
@@ -48,7 +50,7 @@ Please note that each job has its own configuration; any directive such as Home=
 
 Any change to the cronical.dat file will be automatically and quickly detected by Cronical and it will reload and reparse the file.
 
-Text starting with # is used for comments and may occur anywhere in the file. To use # in an actual command, escape it with a backslash, e.g. "\#".
+Text starting with # is used for comments and may occur anywhere in the file. To use # in an actual command, escape it with a backslash (`\#`).
 
 ## Running services
 

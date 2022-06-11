@@ -56,4 +56,4 @@ SmtpSSL       = false
 # the service under a different user name in Services, or use the psexec utility to impersonate
 # another user. See http://technet.microsoft.com/en-us/sysinternals/bb897553.aspx
 
-@reboot cmd /c echo Hello, world!
+@reboot cmd /c echo Hello, world! I am Cronical. && timeout /t 120
