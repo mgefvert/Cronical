@@ -1,12 +1,11 @@
 ﻿using System;
 
-namespace Cronical.Jobs
+namespace Cronical.Jobs;
+
+public enum JobState
 {
-    public enum JobState
-    {
-        Inactive,
-        Starting,
-        Running,
-        Stopping
-    }
+    Inactive,
+    Starting,
+    Running,
+    Stopping
 }
